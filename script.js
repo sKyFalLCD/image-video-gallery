@@ -64,7 +64,7 @@ class FileManager {
                 
                 // 删除按钮
                 if (target.closest('.btn-delete')) {
-                    const idx = parseInt(target.closest('.btn-delete').dataset.index);
+                    const idx = parseInt(target.closest('.btn-delete').dataset.index));
                     this.deleteFile(idx);
                     return;
                 }
@@ -147,7 +147,15 @@ class FileManager {
         this.fileInput.value = '';
     }
     
-    async addFile(file) {
+    addFile(file) {
+        const fileName = file.name;
+        const fileSize = file.size;
+        const fileType = file.type.split('/')[0];
+        
+        // 显示上传进度
+        this.showUploadProgress(fileName, fileSize, fileType);
+        
+        // 使用 XMLHttpRequest 获取进度
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             
@@ -163,15 +171,162 @@ class FileManager {
                     dataUrl: e.target.result
                 };
                 
-                this.files.push(fileData);
-                await this.saveFile(fileData);
-                this.renderFileList();
-                this.updateStorageBar();
-                resolve();
+                try {
+                    await this.saveFile(fileData);
+                    this.files.push(fileData);
+                    this.renderFileList();
+                    this.updateStorageBar();
+                    this.hideUploadProgress(fileName);
+                    resolve();
+                } catch (err) {
+                    this.showUploadError(fileName, '存储失败');
+                    reject(err);
+                }
             };
             
-            reader.onerror = () => reject(reader.error);
+            reader.onerror = () => {
+                this.showUploadError(fileName, '读取文件失败');
+                reject(reader.error);
+            };
+            
+            reader.onabort = () => {
+                this.showUploadError(fileName, '上传已取消');
+                reject(new Error('aborted'));
+            };
+            
             reader.readAsDataURL(file);
+        });
+    }
+    
+    showUploadProgress(fileName, fileSize, fileType) {
+        let container = document.getElementById('uploadProgressContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'uploadProgressContainer';
+            container.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 320px;
+                max-height: 300px;
+                overflow-y: auto;
+                background: #16213e;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                padding: 15px;
+                z-index: 10000;
+            `;
+            document.body.appendChild(container);
+        }
+        
+        const progressId = 'upload-' + Date.now();
+        const progressHTML = `
+            <div class="upload-progress-item" id="${progressId}" data-name="${fileName}">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                    <i class="fas fa-spinner fa-spin" style="color:#667eea;"></i>
+                    <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${fileName}</span>
+                    <span style="color:#a0a0a0;font-size:0.85rem;">${this.formatSize(fileSize)}</span>
+                </div>
+                <div style="height:6px;background:#0f3460;border-radius:3px;overflow:hidden;">
+                    <div class="upload-progress-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#667eea,#764ba2);transition:width 0.2s;"></div>
+                </div>
+                <div class="upload-status" style="font-size:0.8rem;color:#a0a0a0;margin-top:4px;">等待中...</div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', progressHTML);
+        container.style.display = 'block';
+        
+        // 模拟进度（因为FileReader不提供真实进度）
+        this.simulateProgress(progressId);
+    }
+    
+    simulateProgress(progressId) {
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress > 90) progress = 90;
+            
+            const item = document.getElementById(progressId);
+            if (!item) {
+                clearInterval(interval);
+                return;
+            }
+            
+            const bar = item.querySelector('.upload-progress-bar');
+            const status = item.querySelector('.upload-status');
+            
+            if (bar) bar.style.width = progress + '%';
+            if (status) status.textContent = '上传中 ' + Math.round(progress) + '%';
+            
+            if (progress >= 90) {
+                clearInterval(interval);
+            }
+        }, 200);
+        
+        // 存储interval ID以便清除
+        const item = document.getElementById(progressId);
+        if (item) item.dataset.intervalId = interval;
+    }
+    
+    hideUploadProgress(fileName) {
+        const container = document.getElementById('uploadProgressContainer');
+        if (!container) return;
+        
+        const items = container.querySelectorAll('.upload-progress-item');
+        items.forEach(item => {
+            if (item.dataset.name === fileName) {
+                const intervalId = item.dataset.intervalId;
+                if (intervalId) clearInterval(parseInt(intervalId));
+                
+                const status = item.querySelector('.upload-status');
+                const bar = item.querySelector('.upload-progress-bar');
+                const icon = item.querySelector('i');
+                
+                if (status) status.textContent = '上传成功';
+                if (bar) bar.style.width = '100%';
+                if (icon) {
+                    icon.className = 'fas fa-check-circle';
+                    icon.style.color = '#4ade80';
+                }
+                
+                // 2秒后移除
+                setTimeout(() => {
+                    item.remove();
+                    if (container.children.length === 0) {
+                        container.style.display = 'none';
+                    }
+                }, 2000);
+            }
+        });
+    }
+    
+    showUploadError(fileName, message) {
+        const container = document.getElementById('uploadProgressContainer');
+        if (!container) return;
+        
+        const items = container.querySelectorAll('.upload-progress-item');
+        items.forEach(item => {
+            if (item.dataset.name === fileName) {
+                const intervalId = item.dataset.intervalId;
+                if (intervalId) clearInterval(parseInt(intervalId));
+                
+                const status = item.querySelector('.upload-status');
+                const icon = item.querySelector('i');
+                
+                if (status) status.textContent = '失败: ' + message;
+                if (icon) {
+                    icon.className = 'fas fa-times-circle';
+                    icon.style.color = '#ef4444';
+                }
+                
+                // 5秒后移除
+                setTimeout(() => {
+                    item.remove();
+                    if (container.children.length === 0) {
+                        container.style.display = 'none';
+                    }
+                }, 5000);
+            }
         });
     }
     
