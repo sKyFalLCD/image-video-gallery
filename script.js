@@ -127,6 +127,15 @@ class FileManager {
                 }
             });
             
+            // Search button
+            var searchBtn = document.getElementById('searchBtn');
+            if (searchBtn) {
+                searchBtn.addEventListener('click', () => {
+                    var input = document.getElementById('searchInput');
+                    if (input) self.setSearch(input.value);
+                });
+            }
+            
             // Sort buttons in header (document-level for delegation)
             document.addEventListener('click', (e) => {
                 if (e.target.closest('.sort-btn')) {
@@ -135,6 +144,9 @@ class FileManager {
                 }
                 if (e.target.closest('.btn-batch-download')) {
                     this.batchDownload();
+                }
+                if (e.target.closest('.btn-batch-delete')) {
+                    this.deleteSelected();
                 }
             });
             
@@ -751,6 +763,17 @@ class FileManager {
         });
         var footerCount = document.getElementById('footerFileCount');
         if (footerCount) footerCount.textContent = '共 ' + displayFiles.length + ' 个文件';
+        this.updateHeaderCount();
+    }
+    
+    updateHeaderCount() {
+        var displayFiles = this.files.filter(f => {
+            if (this.filterType !== 'all' && f.type !== this.filterType) return false;
+            if (this.searchQuery && !f.name.toLowerCase().includes(this.searchQuery.toLowerCase())) return false;
+            return true;
+        });
+        var headerCount = document.getElementById('fileCountHeader');
+        if (headerCount) headerCount.textContent = '（共' + displayFiles.length + '个文件）';
     }
     
     batchDownload() {
