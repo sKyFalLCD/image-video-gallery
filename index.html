@@ -3,174 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sKyCai的作品展示 - 图片与视频画廊</title>
+    <title>sKyCai的作品展示</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <!-- 头部标题 -->
         <header class="header">
             <h1><i class="fas fa-palette"></i> sKyCai的作品展示</h1>
             <p class="subtitle">个人创作图片与视频展示平台</p>
         </header>
 
-        <!-- 区域一：轮播图 + 缩略图 -->
-        <section class="section section-1">
-            <h2><i class="fas fa-images"></i> 图片展示区</h2>
-            <div class="carousel-container">
-                <!-- 主轮播图 -->
-                <div class="main-carousel empty-state">
-                    <div class="empty-message">
-                        <i class="fas fa-image"></i>
-                        <h3>暂无图片</h3>
-                        <p>上传图片后，将在这里显示轮播效果</p>
-                    </div>
-                </div>
-
-                <!-- 缩略图展示框 -->
-                <div class="thumbnail-container">
-                    <h3><i class="fas fa-th"></i> 图片缩略图</h3>
-                    <div class="thumbnail-grid empty-thumbnails">
-                        <div class="empty-thumbnail">
-                            <i class="fas fa-plus"></i>
-                            <span>等待上传</span>
-                        </div>
-                        <div class="empty-thumbnail">
-                            <i class="fas fa-plus"></i>
-                            <span>等待上传</span>
-                        </div>
-                        <div class="empty-thumbnail">
-                            <i class="fas fa-plus"></i>
-                            <span>等待上传</span>
-                        </div>
-                        <div class="empty-thumbnail">
-                            <i class="fas fa-plus"></i>
-                            <span>等待上传</span>
-                        </div>
-                        <div class="empty-thumbnail">
-                            <i class="fas fa-plus"></i>
-                            <span>等待上传</span>
-                        </div>
-                        <div class="empty-thumbnail">
-                            <i class="fas fa-plus"></i>
-                            <span>等待上传</span>
-                        </div>
-                    </div>
-                </div>
+        <!-- 文件列表区域 -->
+        <section class="section">
+            <h2><i class="fas fa-list"></i> 文件列表</h2>
+            <div class="file-list-header">
+                <span>缩略图</span>
+                <span>文件名</span>
+                <span>类型</span>
+                <span>大小</span>
+                <span>上传日期</span>
+                <span>操作</span>
+            </div>
+            <div class="file-list" id="fileList">
+                <div class="empty-list">暂无文件，请上传</div>
             </div>
         </section>
 
-        <!-- 区域二：2x2视频展示 -->
-        <section class="section section-2">
-            <h2><i class="fas fa-video"></i> 视频展示区</h2>
-            <div class="video-grid">
-                <div class="video-item empty-video">
-                    <div class="video-thumbnail empty-thumbnail">
-                        <i class="fas fa-video"></i>
-                        <div class="empty-label">等待上传视频</div>
-                    </div>
-                    <div class="video-info">
-                        <h4>视频位置 1</h4>
-                        <p>上传视频后显示</p>
-                    </div>
-                </div>
-                <div class="video-item empty-video">
-                    <div class="video-thumbnail empty-thumbnail">
-                        <i class="fas fa-video"></i>
-                        <div class="empty-label">等待上传视频</div>
-                    </div>
-                    <div class="video-info">
-                        <h4>视频位置 2</h4>
-                        <p>上传视频后显示</p>
-                    </div>
-                </div>
-                <div class="video-item empty-video">
-                    <div class="video-thumbnail empty-thumbnail">
-                        <i class="fas fa-video"></i>
-                        <div class="empty-label">等待上传视频</div>
-                    </div>
-                    <div class="video-info">
-                        <h4>视频位置 3</h4>
-                        <p>上传视频后显示</p>
-                    </div>
-                </div>
-                <div class="video-item empty-video">
-                    <div class="video-thumbnail empty-thumbnail">
-                        <i class="fas fa-video"></i>
-                        <div class="empty-label">等待上传视频</div>
-                    </div>
-                    <div class="video-info">
-                        <h4>视频位置 4</h4>
-                        <p>上传视频后显示</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 视频播放模态框 -->
-            <div class="video-modal" id="videoModal">
-                <div class="modal-content">
-                    <span class="close-modal">&times;</span>
-                    <div class="video-player">
-                        <iframe id="videoFrame" width="100%" height="100%" src="" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                </div>
+        <!-- 上传区域 -->
+        <section class="section">
+            <h2><i class="fas fa-cloud-upload-alt"></i> 上传文件</h2>
+            <div class="upload-zone" id="uploadZone">
+                <i class="fas fa-upload"></i>
+                <p>点击选择文件 或 拖拽文件到此处</p>
+                <input type="file" id="fileInput" multiple accept="image/*,video/*">
             </div>
         </section>
 
-        <!-- 区域三：上传功能 + 图片列表管理 -->
-        <section class="section section-3">
-            <h2><i class="fas fa-cloud-upload-alt"></i> 上传与管理区</h2>
-            
-            <!-- 上传区域 -->
-            <div class="upload-area">
-                <label for="imageInput" class="upload-box" id="imageUploadBox">
-                    <i class="fas fa-file-image"></i>
-                    <h3>上传图片</h3>
-                    <p>拖放图片文件或点击选择</p>
-                    <input type="file" id="imageInput" accept="image/*" multiple>
-                </label>
-                
-                <label for="videoInput" class="upload-box" id="videoUploadBox">
-                    <i class="fas fa-file-video"></i>
-                    <h3>上传视频</h3>
-                    <p>拖放视频文件或点击选择</p>
-                    <input type="file" id="videoInput" accept="video/*" multiple>
-                </label>
-            </div>
-
-            <!-- 图片列表管理 -->
-            <div class="image-list-container">
-                <h3><i class="fas fa-list"></i> 图片管理列表</h3>
-                <div class="image-list-header">
-                    <div class="header-item">缩略图</div>
-                    <div class="header-item">文件名</div>
-                    <div class="header-item">大小</div>
-                    <div class="header-item">上传时间</div>
-                    <div class="header-item">操作</div>
-                </div>
-                <div class="image-list" id="imageList">
-                    <div class="empty-list-message">
-                        <i class="fas fa-inbox"></i>
-                        <h4>暂无图片</h4>
-                        <p>上传图片后，将在这里显示管理列表</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 页脚 -->
         <footer class="footer">
-            <p>sKyCai的作品展示 &copy; 2026 | 个人创作图片与视频展示</p>
-            <p class="footer-info">使用HTML5、CSS3和JavaScript构建 | 响应式设计</p>
+            <p>sKyCai的作品展示 &copy; 2026</p>
         </footer>
-    </div>
-
-    <!-- 图片预览模态框 -->
-    <div class="image-modal" id="imageModal">
-        <span class="close-image-modal">&times;</span>
-        <img class="modal-image" id="modalImage" src="" alt="预览图片">
     </div>
 
     <script src="script.js"></script>
