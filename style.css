@@ -340,3 +340,137 @@ h1 i {
         font-size: 0.9rem;
     }
 }
+
+/* 批量操作栏 */
+.file-list-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 25px;
+    background: #0f3460;
+    border-bottom: 1px solid #16213e;
+}
+
+.select-all-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: #a0a0a0;
+    font-size: 0.9rem;
+}
+
+.select-all-label input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.btn-batch-delete {
+    padding: 8px 16px;
+    background: rgba(233, 69, 96, 0.2);
+    border: none;
+    border-radius: 6px;
+    color: #e94560;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-batch-delete:hover {
+    background: #e94560;
+    color: white;
+}
+
+.btn-batch-delete i {
+    margin-right: 6px;
+}
+
+/* 文件复选框 */
+.file-checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.file-checkbox input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* 图标按钮 */
+.file-item {
+    display: grid;
+    grid-template-columns: 40px 50px 160px 1fr 100px 150px 80px;
+    gap: 10px;
+    padding: 12px 25px;
+    align-items: center;
+    border-bottom: 1px solid #0f3460;
+    transition: background 0.2s;
+}
+
+.file-item:hover {
+    background: #1a1a2e;
+}
+
+.btn-icon {
+    padding: 8px 10px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.btn-icon:hover {
+    background: linear-gradient(135deg, #7a8ff0, #8a5cb8);
+    transform: scale(1.05);
+}
+
+.btn-icon-delete {
+    background: rgba(233, 69, 96, 0.2);
+    color: #e94560;
+}
+
+.btn-icon-delete:hover {
+    background: #e94560;
+    color: white;
+}
+
+.file-list-header {
+    display: grid;
+    grid-template-columns: 40px 50px 160px 1fr 100px 150px 80px;
+    gap: 10px;
+    padding: 15px 25px;
+    background: #0f3460;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #a0a0a0;
+}
+
+@media (max-width: 768px) {
+    .file-list-header {
+        display: none;
+    }
+    
+    .file-item {
+        grid-template-columns: 40px 50px 100px 1fr;
+        gap: 10px;
+    }
+    
+    .file-thumb {
+        width: 100px;
+        height: 70px;
+    }
+    
+    .file-size, .file-date {
+        display: none;
+    }
+    
+    .btn-icon {
+        padding: 6px 8px;
+        font-size: 0.8rem;
+    }
+}
