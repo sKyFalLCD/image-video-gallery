@@ -84,7 +84,8 @@ class FileManager {
             reader.onload = async (e) => {
                 const fileData = {
                     id: Date.now() + Math.random(),
-                    name: file.name,
+                    name: file.name.replace(/\.[^/.]+$/, ''),
+                    originalName: file.name,
                     size: file.size,
                     type: file.type.split('/')[0],
                     mimeType: file.type,
@@ -139,7 +140,7 @@ class FileManager {
     }
     
     async deleteFile(index) {
-        if (!confirm('确定删除 "' + this.files[index].name + '" 吗？')) return;
+        if (!confirm('确定删除 "' + this.files[index].originalName + '" 吗？')) return;
         
         const fileId = this.files[index].id;
         this.files.splice(index, 1);
@@ -252,6 +253,12 @@ class FileManager {
         const used = this.formatSize(totalSize);
         const total = this.formatSize(maxSize);
         this.storageText.textContent = used + ' / ' + total;
+        
+        // 更新文件总数
+        const countEl = document.getElementById('fileCount');
+        if (countEl) {
+            countEl.textContent = '共 ' + this.files.length + ' 个文件';
+        }
     }
     
     renderFileList() {
@@ -269,14 +276,24 @@ class FileManager {
             const file = pageFiles[i];
             const realIndex = this.files.indexOf(file);
             const isSelected = this.selectedFiles.has(file.id);
+            const typeIcon = file.type === 'video' ? '<i class="fas fa-video"></i>' : '<i class="fas fa-image"></i>';
+            const typeClass = file.type === 'video' ? 'type-video' : 'type-image';
+            
             html += `
                 <div class="file-item" data-id="${file.id}" data-index="${realIndex}">
                     <div class="file-checkbox">
                         <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="fileManager.toggleSelect('${file.id}')">
                     </div>
                     <div class="file-order">${realIndex + 1}</div>
-                    <img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" data-index="${realIndex}">
-                    <div class="file-name" title="${file.name}">${file.name}</div>
+                    ${file.type === 'image' 
+                        ? `<img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" data-index="${realIndex}>` 
+                        : `<div class="file-thumb video-thumb" data-index="${realIndex}">
+                            <video src="${file.dataUrl}"></video>
+                            <div class="play-overlay"><i class="fas fa-play"></i></div>
+                           </div>`
+                    }
+                    <div class="file-name" title="${file.originalName}">${file.name}</div>
+                    <div class="file-type ${typeClass}">${typeIcon}</div>
                     <div class="file-size">${this.formatSize(file.size)}</div>
                     <div class="file-date">${file.date}</div>
                     <div class="file-actions">
@@ -320,16 +337,15 @@ class FileManager {
         this.fileList.innerHTML = html;
         this.selectAllCheckbox = document.getElementById('selectAll');
         
-        // 设置全选框状态
         if (this.selectAllCheckbox) {
             const pageFilesCheck = this.getCurrentPageFiles();
             this.selectAllCheckbox.checked = pageFilesCheck.length > 0 && pageFilesCheck.every(f => this.selectedFiles.has(f.id));
         }
         
         const self = this;
-        this.fileList.querySelectorAll('.file-thumb').forEach(function(img) {
-            img.style.cursor = 'pointer';
-            img.addEventListener('click', function() {
+        this.fileList.querySelectorAll('.file-thumb').forEach(function(el) {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', function() {
                 const idx = parseInt(this.getAttribute('data-index'));
                 self.showPreview(idx);
             });
@@ -369,11 +385,32 @@ class FileManager {
         if (file && file.type === 'image') {
             this.previewImg.src = file.dataUrl;
             this.previewModal.classList.add('active');
+        } else if (file && file.type === 'video') {
+            const modal = document.getElementById('previewModal');
+            const img = document.getElementById('previewImage');
+            img.src = '';
+            img.style.display = 'none';
+            const videoEl = document.createElement('video');
+            videoEl.src = file.dataUrl;
+            videoEl.controls = true;
+            videoEl.style.cssText = 'max-width:70%;max-height:70%;border-radius:12px;';
+            modal.querySelector('.preview-image').replaceWith(videoEl);
+            modal.classList.add('active');
         }
     }
     
     closePreview() {
         this.previewModal.classList.remove('active');
+        const videoEl = this.previewModal.querySelector('video');
+        if (videoEl) {
+            videoEl.pause();
+        }
+        const img = document.createElement('img');
+        img.id = 'previewImage';
+        img.className = 'preview-image';
+        img.src = '';
+        img.alt = '预览';
+        this.previewModal.querySelector('video')?.replaceWith(img);
     }
     
     formatSize(bytes) {
