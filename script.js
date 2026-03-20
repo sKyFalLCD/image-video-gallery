@@ -2,7 +2,7 @@ class FileManager {
     constructor() {
         this.files = [];
         this.selectedFiles = new Set();
-        this.pageSize = 10;
+        this.pageSize = 5;
         this.currentPage = 1;
         this.fileInput = document.getElementById('fileInput');
         this.uploadZone = document.getElementById('uploadZone');
@@ -128,6 +128,7 @@ class FileManager {
                     return dateA - dateB;
                 });
                 this.currentPage = 1;
+                this.selectedFiles.clear();
                 this.renderFileList();
                 this.updateStorageBar();
                 resolve();
@@ -203,17 +204,41 @@ class FileManager {
     }
     
     getCurrentPageFiles() {
-        const start = 0;
-        const end = this.pageSize;
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = start + this.pageSize;
         return this.files.slice(start, end);
     }
     
     getTotalPages() {
-        return Math.ceil(this.files.length / this.pageSize);
+        return Math.ceil(this.files.length / this.pageSize) || 1;
     }
     
     goToPage(page) {
-        this.currentPage = Math.max(1, Math.min(page, this.getTotalPages()));
+        const totalPages = this.getTotalPages();
+        this.currentPage = Math.max(1, Math.min(page, totalPages));
+        this.selectedFiles.clear();
+        this.renderFileList();
+    }
+    
+    goToPageInput() {
+        const input = document.getElementById('pageInput');
+        if (!input) return;
+        const page = parseInt(input.value);
+        if (!isNaN(page)) {
+            this.goToPage(page);
+        }
+        input.value = '';
+    }
+    
+    changePageSize() {
+        const input = document.getElementById('pageSizeInput');
+        if (!input) return;
+        let size = parseInt(input.value);
+        if (isNaN(size) || size < 1) size = 5;
+        if (size > 10) size = 10;
+        this.pageSize = size;
+        this.currentPage = 1;
+        this.selectedFiles.clear();
         this.renderFileList();
     }
     
@@ -235,9 +260,7 @@ class FileManager {
             return;
         }
         
-        const start = 0;
-        const end = this.pageSize;
-        const pageFiles = this.files.slice(start, end);
+        const pageFiles = this.getCurrentPageFiles();
         const totalPages = this.getTotalPages();
         
         let html = '';
@@ -278,6 +301,9 @@ class FileManager {
                     <i class="fas fa-trash-alt"></i> 批量删除
                 </button>
                 <div class="pagination">
+                    <span class="page-label">每页</span>
+                    <input type="number" id="pageSizeInput" value="${this.pageSize}" min="1" max="10" onchange="fileManager.changePageSize()">
+                    <span class="page-label">个</span>
                     <button class="btn-page" onclick="fileManager.goToPage(${this.currentPage - 1})" ${this.currentPage === 1 ? 'disabled' : ''}>
                         <i class="fas fa-chevron-left"></i>
                     </button>
@@ -285,6 +311,8 @@ class FileManager {
                     <button class="btn-page" onclick="fileManager.goToPage(${this.currentPage + 1})" ${this.currentPage === totalPages ? 'disabled' : ''}>
                         <i class="fas fa-chevron-right"></i>
                     </button>
+                    <input type="number" id="pageInput" placeholder="跳转" min="1" max="${totalPages}">
+                    <button class="btn-page" onclick="fileManager.goToPageInput()">跳转</button>
                 </div>
             </div>
         `;
@@ -294,8 +322,8 @@ class FileManager {
         
         // 设置全选框状态
         if (this.selectAllCheckbox) {
-            const pageFiles = this.getCurrentPageFiles();
-            this.selectAllCheckbox.checked = pageFiles.length > 0 && pageFiles.every(f => this.selectedFiles.has(f.id));
+            const pageFilesCheck = this.getCurrentPageFiles();
+            this.selectAllCheckbox.checked = pageFilesCheck.length > 0 && pageFilesCheck.every(f => this.selectedFiles.has(f.id));
         }
         
         const self = this;
