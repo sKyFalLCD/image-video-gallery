@@ -9,23 +9,34 @@ body {
     background: #1a1a2e;
     color: #eee;
     min-height: 100vh;
+    padding: 20px;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
 }
 
-/* 文件列表 */
-.file-section {
+h1 {
+    text-align: center;
+    padding: 20px 0 30px;
+    color: #fff;
+    font-size: 2rem;
+}
+
+h1 i {
+    color: #e94560;
+    margin-right: 10px;
+}
+
+.section {
     background: #16213e;
     border-radius: 16px;
     overflow: hidden;
     margin-bottom: 20px;
 }
 
-.file-section h2, .upload-section h2 {
+.section h2 {
     padding: 20px 25px;
     font-size: 1.2rem;
     font-weight: 600;
@@ -35,7 +46,7 @@ body {
     gap: 10px;
 }
 
-.file-section h2 i, .upload-section h2 i {
+.section h2 i {
     color: #e94560;
 }
 
@@ -89,12 +100,7 @@ body {
     white-space: nowrap;
 }
 
-.file-size {
-    color: #a0a0a0;
-    font-size: 0.9rem;
-}
-
-.file-date {
+.file-size, .file-date {
     color: #a0a0a0;
     font-size: 0.85rem;
 }
@@ -144,12 +150,6 @@ body {
     color: #a0a0a0;
 }
 
-/* 上传区域 */
-.upload-section {
-    background: #16213e;
-    border-radius: 16px;
-}
-
 .upload-zone {
     padding: 60px 20px;
     border: 3px dashed #0f3460;
@@ -195,7 +195,6 @@ body {
     cursor: pointer;
 }
 
-/* 图片预览弹窗 */
 .preview-modal {
     display: none;
     position: fixed;
@@ -236,7 +235,13 @@ body {
     color: #e94560;
 }
 
-/* 滚动条 */
+.version-footer {
+    text-align: center;
+    padding: 15px;
+    color: #666;
+    font-size: 0.85rem;
+}
+
 .file-list::-webkit-scrollbar {
     width: 8px;
 }
@@ -254,7 +259,6 @@ body {
     background: #e94560;
 }
 
-/* 响应式 */
 @media (max-width: 768px) {
     .file-list-header {
         display: none;
@@ -277,12 +281,4 @@ body {
     .file-actions {
         grid-column: 2;
     }
-}
-
-/* 版本号 */
-.version-footer {
-    text-align: center;
-    padding: 15px;
-    color: #666;
-    font-size: 0.85rem;
 }
