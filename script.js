@@ -199,11 +199,7 @@ class FileManager {
         } else {
             this.selectedFiles.add(fileId);
         }
-        
-        if (this.selectAllCheckbox) {
-            const pageFiles = this.getCurrentPageFiles();
-            this.selectAllCheckbox.checked = pageFiles.length > 0 && pageFiles.every(f => this.selectedFiles.has(f.id));
-        }
+        this.renderFileList();
     }
     
     getCurrentPageFiles() {
@@ -295,6 +291,12 @@ class FileManager {
         
         this.fileList.innerHTML = html;
         this.selectAllCheckbox = document.getElementById('selectAll');
+        
+        // 设置全选框状态
+        if (this.selectAllCheckbox) {
+            const pageFiles = this.getCurrentPageFiles();
+            this.selectAllCheckbox.checked = pageFiles.length > 0 && pageFiles.every(f => this.selectedFiles.has(f.id));
+        }
         
         const self = this;
         this.fileList.querySelectorAll('.file-thumb').forEach(function(img) {
