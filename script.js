@@ -59,6 +59,7 @@ class FileManager {
                 dataUrl: e.target.result
             };
             
+            // 新文件默认排在最后
             self.files.push(fileData);
             self.renderFileList();
             self.saveFiles();
@@ -83,8 +84,7 @@ class FileManager {
                     <div class="file-size">${this.formatSize(file.size)}</div>
                     <div class="file-date">${file.date}</div>
                     <div class="file-actions">
-                        <button class="btn-up" data-index="${i}" ${i === 0 ? 'disabled' : ''}>↑</button>
-                        <button class="btn-down" data-index="${i}" ${i === this.files.length - 1 ? 'disabled' : ''}>↓</button>
+                        <button class="btn-move" data-index="${i}">排序</button>
                         <button class="btn-delete" data-index="${i}">删除</button>
                     </div>
                 </div>
@@ -101,17 +101,10 @@ class FileManager {
             });
         });
         
-        this.fileList.querySelectorAll('.btn-up').forEach(function(btn) {
+        this.fileList.querySelectorAll('.btn-move').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 const idx = parseInt(this.getAttribute('data-index'));
-                self.moveUp(idx);
-            });
-        });
-        
-        this.fileList.querySelectorAll('.btn-down').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                const idx = parseInt(this.getAttribute('data-index'));
-                self.moveDown(idx);
+                self.moveToPosition(idx);
             });
         });
         
@@ -121,6 +114,40 @@ class FileManager {
                 self.deleteFile(idx);
             });
         });
+    }
+    
+    moveToPosition(fromIndex) {
+        const total = this.files.length;
+        const currentPos = fromIndex + 1;
+        
+        const newPosStr = prompt(`当前排在第 ${currentPos} 位，请输入新的排序位置（1-${total}）：`, currentPos);
+        
+        if (newPosStr === null) return; // 用户取消
+        
+        const newPos = parseInt(newPosStr);
+        
+        if (isNaN(newPos) || newPos < 1 || newPos > total) {
+            alert('请输入有效的序号（1-' + total + '）');
+            return;
+        }
+        
+        if (newPos === currentPos) return; // 位置没变
+        
+        const newIndex = newPos - 1;
+        
+        // 移动文件
+        const movedFile = this.files.splice(fromIndex, 1)[0];
+        
+        if (newPos > fromIndex) {
+            // 向后移动：插入到目标位置（因为已经删除了原位置的元素，所以要-1）
+            this.files.splice(newIndex, 0, movedFile);
+        } else {
+            // 向前移动：直接插入到目标位置
+            this.files.splice(newIndex, 0, movedFile);
+        }
+        
+        this.renderFileList();
+        this.saveFiles();
     }
     
     showPreview(index) {
@@ -133,22 +160,6 @@ class FileManager {
     
     closePreview() {
         this.previewModal.classList.remove('active');
-    }
-    
-    moveUp(index) {
-        if (index > 0) {
-            [this.files[index], this.files[index - 1]] = [this.files[index - 1], this.files[index]];
-            this.renderFileList();
-            this.saveFiles();
-        }
-    }
-    
-    moveDown(index) {
-        if (index < this.files.length - 1) {
-            [this.files[index], this.files[index + 1]] = [this.files[index + 1], this.files[index]];
-            this.renderFileList();
-            this.saveFiles();
-        }
     }
     
     deleteFile(index) {
