@@ -41,7 +41,7 @@ body {
 
 .file-list-header {
     display: grid;
-    grid-template-columns: 150px 1fr 100px 120px;
+    grid-template-columns: 150px 1fr 100px 150px 120px;
     gap: 10px;
     padding: 15px 25px;
     background: #0f3460;
@@ -57,7 +57,7 @@ body {
 
 .file-item {
     display: grid;
-    grid-template-columns: 150px 1fr 100px 120px;
+    grid-template-columns: 150px 1fr 100px 150px 120px;
     gap: 10px;
     padding: 15px 25px;
     align-items: center;
@@ -92,6 +92,11 @@ body {
 .file-size {
     color: #a0a0a0;
     font-size: 0.9rem;
+}
+
+.file-date {
+    color: #a0a0a0;
+    font-size: 0.85rem;
 }
 
 .file-actions {
@@ -264,7 +269,7 @@ body {
         height: 70px;
     }
     
-    .file-size {
+    .file-size, .file-date {
         display: none;
     }
     
