@@ -656,20 +656,20 @@ class FileManager {
     }
     
     updateFilterUI() {
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.filter === this.filterType);
-        });
+        var select = document.getElementById('filterSelect');
+        if (select) select.value = this.filterType;
     }
     
     updateSortUI() {
-        document.querySelectorAll('.sort-btn').forEach(btn => {
-            const isActive = btn.dataset.sort === this.sortField;
+        var self = this;
+        document.querySelectorAll('.sort-btn').forEach(function(btn) {
+            var isActive = btn.dataset.sort === self.sortField;
             btn.classList.toggle('active', isActive);
-            const icon = btn.querySelector('i');
+            var icon = btn.querySelector('i');
             if (icon) {
-                if (isActive && this.sortOrder === 'asc') {
+                if (isActive && self.sortOrder === 'asc') {
                     icon.className = 'fas fa-sort-up';
-                } else if (isActive && this.sortOrder === 'desc') {
+                } else if (isActive && self.sortOrder === 'desc') {
                     icon.className = 'fas fa-sort-down';
                 } else {
                     icon.className = 'fas fa-sort';
