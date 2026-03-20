@@ -31,7 +31,18 @@ class FileManager {
         });
         
         // 预览关闭
-        this.previewModal.addEventListener('click', () => this.closePreview());
+        this.previewModal.addEventListener('click', (e) => {
+            if (e.target === this.previewModal || e.target.classList.contains('close-preview')) {
+                this.closePreview();
+            }
+        });
+        
+        // ESC键关闭预览
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.previewModal.classList.contains('active')) {
+                this.closePreview();
+            }
+        });
         
         // 加载已保存的文件
         this.loadFiles();
@@ -75,17 +86,33 @@ class FileManager {
         
         this.fileList.innerHTML = this.files.map((file, index) => `
             <div class="file-item" data-id="${file.id}">
-                <img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" onclick="fileManager.previewImage('${file.dataUrl}')">
+                <img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" data-url="${file.dataUrl}">
                 <div class="file-name" title="${file.name}">${file.name}</div>
                 <div class="file-size">${this.formatSize(file.size)}</div>
                 <div class="file-date">${file.date}</div>
                 <div class="file-actions">
-                    <button class="btn-up" onclick="fileManager.moveUp(${index})" ${index === 0 ? 'disabled' : ''}>↑</button>
-                    <button class="btn-down" onclick="fileManager.moveDown(${index})" ${index === this.files.length - 1 ? 'disabled' : ''}>↓</button>
-                    <button class="btn-delete" onclick="fileManager.deleteFile(${index})">删除</button>
+                    <button class="btn-up" data-index="${index}" ${index === 0 ? 'disabled' : ''}>↑</button>
+                    <button class="btn-down" data-index="${index}" ${index === this.files.length - 1 ? 'disabled' : ''}>↓</button>
+                    <button class="btn-delete" data-index="${index}">删除</button>
                 </div>
             </div>
         `).join('');
+        
+        // 绑定缩略图点击事件
+        this.fileList.querySelectorAll('.file-thumb').forEach(img => {
+            img.addEventListener('click', () => this.previewImage(img.dataset.url));
+        });
+        
+        // 绑定按钮事件
+        this.fileList.querySelectorAll('.btn-up').forEach(btn => {
+            btn.addEventListener('click', () => this.moveUp(parseInt(btn.dataset.index)));
+        });
+        this.fileList.querySelectorAll('.btn-down').forEach(btn => {
+            btn.addEventListener('click', () => this.moveDown(parseInt(btn.dataset.index)));
+        });
+        this.fileList.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', () => this.deleteFile(parseInt(btn.dataset.index)));
+        });
     }
     
     previewImage(dataUrl) {
