@@ -18,37 +18,42 @@ class FileManager {
     }
     
     async init() {
-        await this.openDB();
-        
-        this.fileInput.addEventListener('change', (e) => this.handleFiles(e.target.files));
-        
-        this.uploadZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            this.uploadZone.classList.add('dragover');
-        });
-        
-        this.uploadZone.addEventListener('dragleave', () => {
-            this.uploadZone.classList.remove('dragover');
-        });
-        
-        this.uploadZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            this.uploadZone.classList.remove('dragover');
-            this.handleFiles(e.dataTransfer.files);
-        });
-        
-        this.previewModal.addEventListener('click', () => this.closePreview());
-        
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') this.closePreview();
-        });
-        
-        await this.loadFiles();
-        
-        const ver = document.getElementById('versionNum');
-        if (ver) ver.textContent = ver.getAttribute('data-version') || '';
-        
-        this.updateStorageBar();
+        try {
+            await this.openDB();
+            
+            this.fileInput.addEventListener('change', (e) => this.handleFiles(e.target.files));
+            
+            this.uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                this.uploadZone.classList.add('dragover');
+            });
+            
+            this.uploadZone.addEventListener('dragleave', () => {
+                this.uploadZone.classList.remove('dragover');
+            });
+            
+            this.uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                this.uploadZone.classList.remove('dragover');
+                this.handleFiles(e.dataTransfer.files);
+            });
+            
+            this.previewModal.addEventListener('click', () => this.closePreview());
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') this.closePreview();
+            });
+            
+            await this.loadFiles();
+            
+            const ver = document.getElementById('versionNum');
+            if (ver) ver.textContent = ver.getAttribute('data-version') || '';
+            
+            this.updateStorageBar();
+        } catch (err) {
+            console.error('Init error:', err);
+            alert('页面加载出错，请刷新重试');
+        }
     }
     
     openDB() {
@@ -254,7 +259,6 @@ class FileManager {
         const total = this.formatSize(maxSize);
         this.storageText.textContent = used + ' / ' + total;
         
-        // 更新文件总数
         const countEl = document.getElementById('fileCount');
         if (countEl) {
             countEl.textContent = '共 ' + this.files.length + ' 个文件';
@@ -279,60 +283,40 @@ class FileManager {
             const typeText = file.type === 'video' ? '视频' : '图片';
             const typeClass = file.type === 'video' ? 'type-video' : 'type-image';
             
-            html += `
-                <div class="file-item" data-id="${file.id}" data-index="${realIndex}">
-                    <div class="file-checkbox">
-                        <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="fileManager.toggleSelect('${file.id}')">
-                    </div>
-                    <div class="file-order">${realIndex + 1}</div>
-                    ${file.type === 'image' 
-                        ? `<img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" data-index="${realIndex}"> 
-                        : `<div class="file-thumb video-thumb" data-index="${realIndex}">
-                            <video src="${file.dataUrl}"></video>
-                            <div class="play-overlay"><i class="fas fa-play"></i></div>
-                           </div>`
-                    }
-                    <div class="file-name" title="${file.originalName}">${file.name}</div>
-                    <div class="file-type ${typeClass}">${typeText}</div>
-                    <div class="file-size">${this.formatSize(file.size)}</div>
-                    <div class="file-date">${file.date}</div>
-                    <div class="file-action-btns">
-                        <button class="btn-icon" onclick="fileManager.moveToPosition(${realIndex})" title="排序">
-                            <i class="fas fa-sort"></i>
-                        </button>
-                        <button class="btn-icon btn-icon-delete" onclick="fileManager.deleteFile(${realIndex})" title="删除">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
+            let thumbHtml;
+            if (file.type === 'image') {
+                thumbHtml = '<img class="file-thumb" src="' + file.dataUrl + '" alt="' + file.name + '" data-index="' + realIndex + '">';
+            } else {
+                thumbHtml = '<div class="file-thumb video-thumb" data-index="' + realIndex + '"><video src="' + file.dataUrl + '"></video><div class="play-overlay"><i class="fas fa-play"></i></div></div>';
+            }
+            
+            html += '<div class="file-item" data-id="' + file.id + '" data-index="' + realIndex + '">';
+            html += '<div class="file-checkbox"><input type="checkbox" ' + (isSelected ? 'checked' : '') + ' onchange="fileManager.toggleSelect(\'' + file.id + '\')"></div>';
+            html += '<div class="file-order">' + (realIndex + 1) + '</div>';
+            html += thumbHtml;
+            html += '<div class="file-name" title="' + file.originalName + '">' + file.name + '</div>';
+            html += '<div class="file-type ' + typeClass + '">' + typeText + '</div>';
+            html += '<div class="file-size">' + this.formatSize(file.size) + '</div>';
+            html += '<div class="file-date">' + file.date + '</div>';
+            html += '<div class="file-action-btns">';
+            html += '<button class="btn-icon" onclick="fileManager.moveToPosition(' + realIndex + ')" title="排序"><i class="fas fa-sort"></i></button>';
+            html += '<button class="btn-icon btn-icon-delete" onclick="fileManager.deleteFile(' + realIndex + ')" title="删除"><i class="fas fa-trash-alt"></i></button>';
+            html += '</div></div>';
         }
         
-        html += `
-            <div class="file-list-footer">
-                <label class="select-all-label">
-                    <input type="checkbox" id="selectAll" onchange="fileManager.toggleSelectAll()">
-                    全选
-                </label>
-                <button class="btn-batch-delete" onclick="fileManager.deleteSelected()">
-                    <i class="fas fa-trash-alt"></i> 批量删除
-                </button>
-                <div class="pagination">
-                    <span class="page-label">每页</span>
-                    <input type="number" id="pageSizeInput" value="${this.pageSize}" min="1" max="10" onchange="fileManager.changePageSize()">
-                    <span class="page-label">个</span>
-                    <button class="btn-page" onclick="fileManager.goToPage(${this.currentPage - 1})" ${this.currentPage === 1 ? 'disabled' : ''}>
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <span class="page-info">${this.currentPage} / ${totalPages}</span>
-                    <button class="btn-page" onclick="fileManager.goToPage(${this.currentPage + 1})" ${this.currentPage === totalPages ? 'disabled' : ''}>
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                    <input type="number" id="pageInput" placeholder="跳转" min="1" max="${totalPages}">
-                    <button class="btn-page" onclick="fileManager.goToPageInput()">跳转</button>
-                </div>
-            </div>
-        `;
+        html += '<div class="file-list-footer">';
+        html += '<label class="select-all-label"><input type="checkbox" id="selectAll" onchange="fileManager.toggleSelectAll()">全选</label>';
+        html += '<button class="btn-batch-delete" onclick="fileManager.deleteSelected()"><i class="fas fa-trash-alt"></i> 批量删除</button>';
+        html += '<div class="pagination">';
+        html += '<span class="page-label">每页</span>';
+        html += '<input type="number" id="pageSizeInput" value="' + this.pageSize + '" min="1" max="10" onchange="fileManager.changePageSize()">';
+        html += '<span class="page-label">个</span>';
+        html += '<button class="btn-page" onclick="fileManager.goToPage(' + (this.currentPage - 1) + ')" ' + (this.currentPage === 1 ? 'disabled' : '') + '><i class="fas fa-chevron-left"></i></button>';
+        html += '<span class="page-info">' + this.currentPage + ' / ' + totalPages + '</span>';
+        html += '<button class="btn-page" onclick="fileManager.goToPage(' + (this.currentPage + 1) + ')" ' + (this.currentPage === totalPages ? 'disabled' : '') + '><i class="fas fa-chevron-right"></i></button>';
+        html += '<input type="number" id="pageInput" placeholder="跳转" min="1" max="' + totalPages + '">';
+        html += '<button class="btn-page" onclick="fileManager.goToPageInput()">跳转</button>';
+        html += '</div></div>';
         
         this.fileList.innerHTML = html;
         this.selectAllCheckbox = document.getElementById('selectAll');
@@ -388,13 +372,12 @@ class FileManager {
         } else if (file && file.type === 'video') {
             const modal = document.getElementById('previewModal');
             const img = document.getElementById('previewImage');
-            img.src = '';
             img.style.display = 'none';
             const videoEl = document.createElement('video');
             videoEl.src = file.dataUrl;
             videoEl.controls = true;
             videoEl.style.cssText = 'max-width:70%;max-height:70%;border-radius:12px;';
-            modal.querySelector('.preview-image').replaceWith(videoEl);
+            img.replaceWith(videoEl);
             modal.classList.add('active');
         }
     }
@@ -404,13 +387,14 @@ class FileManager {
         const videoEl = this.previewModal.querySelector('video');
         if (videoEl) {
             videoEl.pause();
+            videoEl.remove();
         }
         const img = document.createElement('img');
         img.id = 'previewImage';
         img.className = 'preview-image';
         img.src = '';
         img.alt = '预览';
-        this.previewModal.querySelector('video')?.replaceWith(img);
+        this.previewModal.querySelector('.close-preview').after(img);
     }
     
     formatSize(bytes) {
