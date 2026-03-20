@@ -3,6 +3,9 @@ class FileManager {
         this.files = [];
         this.selectedFiles = new Set();
         this.pageSize = 5;
+        this.filterType = 'all'; // all, image, video
+        this.sortField = 'date'; // date, size
+        this.sortOrder = 'desc'; // asc, desc
         this.currentPage = 1;
         this.fileInput = document.getElementById('fileInput');
         this.uploadZone = document.getElementById('uploadZone');
@@ -348,11 +351,7 @@ class FileManager {
             
             request.onsuccess = () => {
                 this.files = request.result || [];
-                this.files.sort((a, b) => {
-                    const dateA = new Date(a.date || 0);
-                    const dateB = new Date(b.date || 0);
-                    return dateA - dateB;
-                });
+                
                 this.currentPage = 1;
                 this.selectedFiles.clear();
                 this.renderFileList();
@@ -478,13 +477,33 @@ class FileManager {
     }
     
     renderFileList() {
-        if (this.files.length === 0) {
-            this.fileList.innerHTML = '<div class="empty-list">暂无文件，请上传</div>';
-            return;
-        }
+        // Filter files
+        let displayFiles = this.files.filter(f => {
+            if (this.filterType === 'all') return true;
+            return f.type === this.filterType;
+        });
         
-        const pageFiles = this.getCurrentPageFiles();
-        const totalPages = this.getTotalPages();
+        // Sort files
+        displayFiles.sort((a, b) => {
+            let valA, valB;
+            if (this.sortField === 'size') {
+                valA = a.size;
+                valB = b.size;
+            } else {
+                valA = new Date(a.date || 0);
+                valB = new Date(b.date || 0);
+            }
+            if (this.sortOrder === 'asc') {
+                return valA > valB ? 1 : -1;
+            } else {
+                return valA < valB ? 1 : -1;
+            }
+        });
+        
+        if (displayFiles.length === 0) { this.fileList.innerHTML = '<div class="empty-list">暂无文件，请上传</div>'; return; }
+        
+        const pageFiles = displayFiles.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize);
+        const totalPages = Math.ceil(displayFiles.length / this.pageSize) || 1;
         
         let html = '';
         
@@ -494,17 +513,15 @@ class FileManager {
             const isSelected = this.selectedFiles.has(String(file.id));
             const typeText = file.type === 'video' ? '视频' : '图片';
             const typeClass = file.type === 'video' ? 'type-video' : 'type-image';
-            
             let thumbHtml;
             if (file.type === 'image') {
                 thumbHtml = '<img class="file-thumb" src="' + file.dataUrl + '" alt="' + file.name + '" data-index="' + realIndex + '">';
             } else {
                 thumbHtml = '<div class="file-thumb video-thumb" data-index="' + realIndex + '"><video src="' + file.dataUrl + '"></video><div class="play-overlay"><i class="fas fa-play"></i></div></div>';
             }
-            
             html += '<div class="file-item" data-id="' + file.id + '" data-index="' + realIndex + '">';
             html += '<div class="file-checkbox"><input type="checkbox" ' + (isSelected ? 'checked' : '') + ' data-file-id="' + file.id + '"></div>';
-            html += '<div class="file-order">' + (realIndex + 1) + '</div>';
+            html += '<div class="file-order">' + (this.files.indexOf(file) + 1) + '</div>';
             html += thumbHtml;
             html += '<div class="file-name" title="' + file.originalName + '">' + file.name + '</div>';
             html += '<div class="file-type ' + typeClass + '">' + typeText + '</div>';
@@ -520,32 +537,19 @@ class FileManager {
         html += '<label class="select-all-label"><input type="checkbox" id="selectAll">全选</label>';
         html += '<button class="btn-batch-delete"><i class="fas fa-trash-alt"></i> 批量删除</button>';
         html += '<div class="pagination">';
-        html += '<span class="page-label">每页</span>';
-        html += '<input type="number" id="pageSizeInput" value="' + this.pageSize + '" min="1" max="10">';
-        html += '<span class="page-label">个</span>';
+        html += '<span class="page-label">每页</span><input type="number" id="pageSizeInput" value="' + this.pageSize + '" min="1" max="10"><span class="page-label">个</span>';
         html += '<button class="btn-page btn-page-nav" data-page="' + (this.currentPage - 1) + '" ' + (this.currentPage === 1 ? 'disabled' : '') + '><i class="fas fa-chevron-left"></i></button>';
         html += '<span class="page-info">' + this.currentPage + ' / ' + totalPages + '</span>';
         html += '<button class="btn-page btn-page-nav" data-page="' + (this.currentPage + 1) + '" ' + (this.currentPage === totalPages ? 'disabled' : '') + '><i class="fas fa-chevron-right"></i></button>';
-        html += '<input type="number" id="pageInput" placeholder="跳转" min="1">';
-        html += '<button class="btn-page" id="jumpBtn">跳转</button>';
+        html += '<input type="number" id="pageInput" placeholder="跳转" min="1"><button class="btn-page" id="jumpBtn">跳转</button>';
         html += '</div></div>';
         
         this.fileList.innerHTML = html;
         
-        // 设置全选状态
         const selectAll = document.getElementById('selectAll');
         if (selectAll) {
-            const pageFilesCheck = this.getCurrentPageFiles();
-            selectAll.checked = pageFilesCheck.length > 0 && pageFilesCheck.every(f => this.selectedFiles.has(String(f.id)));
+            selectAll.checked = pageFiles.length > 0 && pageFiles.every(f => this.selectedFiles.has(String(f.id)));
         }
-        
-        // 跳转按钮事件
-        document.getElementById('jumpBtn').addEventListener('click', () => {
-            const input = document.getElementById('pageInput');
-            const page = parseInt(input.value);
-            if (!isNaN(page)) this.goToPage(page);
-            input.value = '';
-        });
     }
     
     async moveToPosition(fromIndex) {
@@ -607,6 +611,51 @@ class FileManager {
         img.src = '';
         img.alt = '预览';
         this.previewModal.querySelector('.close-preview').after(img);
+    }
+    
+    
+    setFilter(type) {
+        this.filterType = type;
+        this.currentPage = 1;
+        this.selectedFiles.clear();
+        this.renderFileList();
+        this.updateFilterUI();
+    }
+    
+    toggleSort(field) {
+        if (this.sortField === field) {
+            this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortField = field;
+            this.sortOrder = 'desc';
+        }
+        this.currentPage = 1;
+        this.selectedFiles.clear();
+        this.renderFileList();
+        this.updateSortUI();
+    }
+    
+    updateFilterUI() {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === this.filterType);
+        });
+    }
+    
+    updateSortUI() {
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+            const isActive = btn.dataset.sort === this.sortField;
+            btn.classList.toggle('active', isActive);
+            const icon = btn.querySelector('i');
+            if (icon) {
+                if (isActive && this.sortOrder === 'asc') {
+                    icon.className = 'fas fa-sort-up';
+                } else if (isActive && this.sortOrder === 'desc') {
+                    icon.className = 'fas fa-sort-down';
+                } else {
+                    icon.className = 'fas fa-sort';
+                }
+            }
+        });
     }
     
     formatSize(bytes) {
