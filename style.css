@@ -670,3 +670,31 @@ h1 i {
 .file-order {
     text-align: center;
 }
+
+/* Batch download button */
+.btn-batch-download {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+.btn-batch-download:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Download icon button */
+.btn-download {
+    color: #4ade80;
+}
+.btn-download:hover {
+    color: #22c55e;
+    transform: scale(1.1);
+}
