@@ -597,10 +597,11 @@ class FileManager {
         
         this.fileList.innerHTML = html;
         
-        const selectAll = document.getElementById('selectAll');
-        if (selectAll) {
-            selectAll.checked = pageFiles.length > 0 && pageFiles.every(f => this.selectedFiles.has(String(f.id)));
-        }
+        const headerCheckbox = document.getElementById('selectAll');
+        const footerCheckbox = document.getElementById('selectAllFooter');
+        const allSelected = pageFiles.length > 0 && pageFiles.every(f => this.selectedFiles.has(String(f.id)));
+        if (headerCheckbox) headerCheckbox.checked = allSelected;
+        if (footerCheckbox) footerCheckbox.checked = allSelected;
     }
     
     async moveToPosition(fromIndex) {
