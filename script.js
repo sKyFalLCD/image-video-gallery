@@ -184,6 +184,16 @@ class ImageManager {
         this.imageInput.addEventListener('change', (e) => this.handleImageUpload(e));
         this.videoInput.addEventListener('change', (e) => this.handleVideoUpload(e));
         
+        // 点击上传区域触发文件选择（备用方案）
+        this.imageUploadBox.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            this.imageInput.click(); 
+        });
+        this.videoUploadBox.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            this.videoInput.click(); 
+        });
+        
         // 拖放上传
         this.setupDragAndDrop(this.imageUploadBox, this.imageInput, 'image');
         this.setupDragAndDrop(this.videoUploadBox, this.videoInput, 'video');
