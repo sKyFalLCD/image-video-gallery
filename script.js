@@ -1,6 +1,7 @@
 class FileManager {
     constructor() {
         this.files = [];
+        this.selectedFiles = new Set();
         this.fileInput = document.getElementById('fileInput');
         this.uploadZone = document.getElementById('uploadZone');
         this.fileList = document.getElementById('fileList');
@@ -8,6 +9,7 @@ class FileManager {
         this.previewImg = document.getElementById('previewImage');
         this.storageFill = document.getElementById('storageFill');
         this.storageText = document.getElementById('storageText');
+        this.selectAllCheckbox = null;
         this.db = null;
         
         this.init();
@@ -41,11 +43,9 @@ class FileManager {
         
         await this.loadFiles();
         
-        // 显示版本号
         const ver = document.getElementById('versionNum');
         if (ver) ver.textContent = ver.getAttribute('data-version') || '';
         
-        // 显示存储空间
         this.updateStorageBar();
     }
     
@@ -139,6 +139,7 @@ class FileManager {
         
         const fileId = this.files[index].id;
         this.files.splice(index, 1);
+        this.selectedFiles.delete(fileId);
         
         return new Promise((resolve, reject) => {
             const tx = this.db.transaction('files', 'readwrite');
@@ -153,9 +154,58 @@ class FileManager {
         });
     }
     
+    async deleteSelected() {
+        if (this.selectedFiles.size === 0) {
+            alert('请先勾选要删除的文件');
+            return;
+        }
+        
+        const count = this.selectedFiles.size;
+        if (!confirm('确定删除选中的 ' + count + ' 个文件吗？')) return;
+        
+        const toDelete = [...this.selectedFiles];
+        
+        for (const fileId of toDelete) {
+            await new Promise((resolve, reject) => {
+                const tx = this.db.transaction('files', 'readwrite');
+                const store = tx.objectStore('files');
+                store.delete(fileId);
+                tx.oncomplete = resolve;
+                tx.onerror = reject;
+            });
+        }
+        
+        this.files = this.files.filter(f => !this.selectedFiles.has(f.id));
+        this.selectedFiles.clear();
+        this.renderFileList();
+        this.updateStorageBar();
+    }
+    
+    toggleSelectAll() {
+        if (this.selectAllCheckbox && this.selectAllCheckbox.checked) {
+            this.files.forEach(f => this.selectedFiles.add(f.id));
+        } else {
+            this.selectedFiles.clear();
+        }
+        this.renderFileList();
+    }
+    
+    toggleSelect(fileId) {
+        if (this.selectedFiles.has(fileId)) {
+            this.selectedFiles.delete(fileId);
+        } else {
+            this.selectedFiles.add(fileId);
+        }
+        
+        // 更新全选状态
+        if (this.selectAllCheckbox) {
+            this.selectAllCheckbox.checked = this.selectedFiles.size === this.files.length;
+        }
+    }
+    
     updateStorageBar() {
         const totalSize = this.files.reduce((sum, f) => sum + f.size, 0);
-        const maxSize = 500 * 1024 * 1024; // 500MB
+        const maxSize = 500 * 1024 * 1024;
         const percent = Math.min((totalSize / maxSize) * 100, 100);
         
         this.storageFill.style.width = percent + '%';
@@ -171,24 +221,45 @@ class FileManager {
             return;
         }
         
-        let html = '';
+        let html = `
+            <div class="file-list-toolbar">
+                <label class="select-all-label">
+                    <input type="checkbox" id="selectAll" onchange="fileManager.toggleSelectAll()">
+                    全选
+                </label>
+                <button class="btn-batch-delete" onclick="fileManager.deleteSelected()">
+                    <i class="fas fa-trash-alt"></i> 批量删除
+                </button>
+            </div>
+        `;
+        
         for (let i = 0; i < this.files.length; i++) {
             const file = this.files[i];
+            const isSelected = this.selectedFiles.has(file.id);
             html += `
                 <div class="file-item" data-id="${file.id}" data-index="${i}">
+                    <div class="file-checkbox">
+                        <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="fileManager.toggleSelect('${file.id}')">
+                    </div>
                     <div class="file-order">${i + 1}</div>
                     <img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" data-index="${i}">
                     <div class="file-name" title="${file.name}">${file.name}</div>
                     <div class="file-size">${this.formatSize(file.size)}</div>
                     <div class="file-date">${file.date}</div>
                     <div class="file-actions">
-                        <button class="btn-move" data-index="${i}">排序</button>
-                        <button class="btn-delete" data-index="${i}">删除</button>
+                        <button class="btn-icon" onclick="fileManager.moveToPosition(${i})" title="排序">
+                            <i class="fas fa-sort"></i>
+                        </button>
+                        <button class="btn-icon btn-icon-delete" onclick="fileManager.deleteFile(${i})" title="删除">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
                     </div>
                 </div>
             `;
         }
+        
         this.fileList.innerHTML = html;
+        this.selectAllCheckbox = document.getElementById('selectAll');
         
         const self = this;
         this.fileList.querySelectorAll('.file-thumb').forEach(function(img) {
@@ -196,20 +267,6 @@ class FileManager {
             img.addEventListener('click', function() {
                 const idx = parseInt(this.getAttribute('data-index'));
                 self.showPreview(idx);
-            });
-        });
-        
-        this.fileList.querySelectorAll('.btn-move').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                const idx = parseInt(this.getAttribute('data-index'));
-                self.moveToPosition(idx);
-            });
-        });
-        
-        this.fileList.querySelectorAll('.btn-delete').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                const idx = parseInt(this.getAttribute('data-index'));
-                self.deleteFile(idx);
             });
         });
     }
