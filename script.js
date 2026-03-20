@@ -5,7 +5,7 @@ class FileManager {
         this.pageSize = 5;
         this.filterType = 'all'; // all, image, video
         this.sortField = 'order'; // order, date, size
-        this.sortOrder = 'desc'; // asc, desc
+        this.sortOrder = 'asc'; // asc, desc
         this.currentPage = 1;
         this.fileInput = document.getElementById('fileInput');
         this.uploadZone = document.getElementById('uploadZone');
@@ -676,6 +676,12 @@ class FileManager {
                 }
             }
         });
+        // Update header selectAll state
+        var selectAll = document.getElementById("selectAll");
+        if (selectAll) {
+            var pageFiles = this.getCurrentPageFiles();
+            selectAll.checked = pageFiles.length > 0 && pageFiles.every(function(f) { return this.selectedFiles.has(String(f.id)); }, this);
+        }
     }
     
     formatSize(bytes) {
