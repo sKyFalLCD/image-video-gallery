@@ -17,20 +17,14 @@
                 <span class="file-count" id="fileCount">共 0 个文件</span>
             </div>
             <div class="file-list-header">
-                <span class="col-check"></span>
-                <span class="col-order">序号</span>
+                <span class="col-check"><input type="checkbox" id="selectAll"></span>
+                <span class="col-order"><button class="sort-btn active" data-sort="order" title="按序号排序"><i class="fas fa-sort"></i>序号</button></span>
                 <span class="col-thumb">缩略图</span>
                 <span class="col-name">文件名</span>
                 <span class="col-type">类型</span>
-                <span class="col-filter">
-        <select class="filter-select" id="filterSelect">
-            <option value="all">全部</option>
-            <option value="image">图片</option>
-            <option value="video">视频</option>
-        </select>
-    </span>
-                <span class="col-size"><button class="sort-btn" data-sort="size" title="按大小排序"><i class="fas fa-sort"></i>大小</button></span>
-                <span class="col-date"><button class="sort-btn active" data-sort="date" title="按时间排序"><i class="fas fa-sort-down"></i>时间</button></span>
+                <span class="col-filter"><select class="filter-select" id="filterSelect"><option value="all">类型</option><option value="image">图片</option><option value="video">视频</option></select></span>
+                <span class="col-size"><button class="sort-btn" data-sort="size" title="按大小排序">大小<i class="fas fa-sort"></i></button></span>
+                <span class="col-date"><button class="sort-btn" data-sort="date" title="按时间排序">时间<i class="fas fa-sort"></i></button></span>
                 <span class="col-action">操作</span>
             </div>
             <div class="file-list" id="fileList">
@@ -63,7 +57,7 @@
     </div>
 
     <footer class="version-footer">
-        <span id="versionNum" data-version="v1.0.0015"></span>
+        <span id="versionNum" data-version="v1.0.0016"></span>
     </footer>
 
     <script src="script.js"></script>
