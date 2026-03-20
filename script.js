@@ -43,15 +43,18 @@ class FileManager {
             this.previewModal.addEventListener('click', () => this.closePreview());
             
             // 事件委托
-            // 统一的事件处理
-            this.fileList.addEventListener('click', (e) => {
-                const target = e.target;
-                
-                // 全选
-                if (target.id === 'selectAll' || target.closest('#selectAllFooter')) {
+            // Document-level event handlers for elements outside fileList
+            document.addEventListener('click', (e) => {
+                // Header selectAll checkbox
+                if (e.target.id === 'selectAll') {
                     this.toggleSelectAll();
                     return;
                 }
+            });
+            
+            // 统一的事件处理
+            this.fileList.addEventListener('click', (e) => {
+                const target = e.target;
                 
                 // 单选
                 if (target.type === 'checkbox' && target.dataset.fileId) {
@@ -561,7 +564,7 @@ class FileManager {
             html += '<div class="file-date">' + file.date + '</div>';
             html += '<div class="file-action-btns">';
             html += '<button class="btn-icon btn-download" data-index="' + realIndex + '" title="下载"><i class="fas fa-download"></i></button>';
-            html += '<button class="btn-icon btn-move" data-index="' + realIndex + '" title="排序"><i class="fas fa-sort"></i></button>';
+            html += '<button class="btn-icon btn-move" data-index="' + realIndex + '" title="调整顺序"><i class="fas fa-arrows-alt-v"></i></button>';
             html += '<button class="btn-icon btn-delete" data-index="' + realIndex + '" title="删除"><i class="fas fa-trash-alt"></i></button>';
             html += '</div></div>';
         }
