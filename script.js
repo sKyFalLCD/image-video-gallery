@@ -593,6 +593,7 @@ class FileManager {
         html += '<div class="file-list-footer">';
         
         html += '<button class="btn-batch-download"><i class="fas fa-download"></i> 批量下载</button>';
+        html += '<span class="footer-file-count" id="footerFileCount"></span>';
         html += '<button class="btn-batch-delete"><i class="fas fa-trash-alt"></i> 批量删除</button>';
         html += '<div class="pagination">';
         html += '<span class="page-label">每页</span><input type="number" id="pageSizeInput" value="' + this.pageSize + '" min="1" max="10"><span class="page-label">个</span>';
@@ -738,6 +739,16 @@ class FileManager {
         link.href = file.dataUrl;
         link.download = file.originalName || file.name;
         link.click();
+    }
+    
+    updateFooterCount() {
+        var displayFiles = this.files.filter(f => {
+            if (this.filterType !== 'all' && f.type !== this.filterType) return false;
+            if (this.searchQuery && !f.name.toLowerCase().includes(this.searchQuery.toLowerCase())) return false;
+            return true;
+        });
+        var footerCount = document.getElementById('footerFileCount');
+        if (footerCount) footerCount.textContent = '共 ' + displayFiles.length + ' 个文件';
     }
     
     batchDownload() {
