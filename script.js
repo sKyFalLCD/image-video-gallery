@@ -286,7 +286,7 @@ class FileManager {
                     </div>
                     <div class="file-order">${realIndex + 1}</div>
                     ${file.type === 'image' 
-                        ? `<img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" data-index="${realIndex}>` 
+                        ? `<img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" data-index="${realIndex}"> 
                         : `<div class="file-thumb video-thumb" data-index="${realIndex}">
                             <video src="${file.dataUrl}"></video>
                             <div class="play-overlay"><i class="fas fa-play"></i></div>
