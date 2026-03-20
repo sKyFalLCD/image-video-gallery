@@ -6,11 +6,14 @@ class FileManager {
         this.fileList = document.getElementById('fileList');
         this.previewModal = document.getElementById('previewModal');
         this.previewImg = document.getElementById('previewImage');
+        this.db = null;
         
         this.init();
     }
     
-    init() {
+    async init() {
+        await this.openDB();
+        
         this.fileInput.addEventListener('change', (e) => this.handleFiles(e.target.files));
         
         this.uploadZone.addEventListener('dragover', (e) => {
@@ -34,11 +37,30 @@ class FileManager {
             if (e.key === 'Escape') this.closePreview();
         });
         
-        this.loadFiles();
+        await this.loadFiles();
         
-        // 显示版本号（从HTML属性读取）
+        // 显示版本号
         const ver = document.getElementById('versionNum');
         if (ver) ver.textContent = ver.getAttribute('data-version') || '';
+    }
+    
+    openDB() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open('SkyGalleryDB', 1);
+            
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => {
+                this.db = request.result;
+                resolve();
+            };
+            
+            request.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains('files')) {
+                    db.createObjectStore('files', { keyPath: 'id' });
+                }
+            };
+        });
     }
     
     handleFiles(fileList) {
@@ -48,27 +70,79 @@ class FileManager {
         this.fileInput.value = '';
     }
     
-    addFile(file) {
-        const reader = new FileReader();
-        const self = this;
-        
-        reader.onload = function(e) {
-            const fileData = {
-                id: Date.now() + Math.random(),
-                name: file.name,
-                size: file.size,
-                type: file.type.split('/')[0],
-                mimeType: file.type,
-                date: new Date().toLocaleString('zh-CN'),
-                dataUrl: e.target.result
+    async addFile(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            
+            reader.onload = async (e) => {
+                const fileData = {
+                    id: Date.now() + Math.random(),
+                    name: file.name,
+                    size: file.size,
+                    type: file.type.split('/')[0],
+                    mimeType: file.type,
+                    date: new Date().toLocaleString('zh-CN'),
+                    dataUrl: e.target.result
+                };
+                
+                this.files.push(fileData);
+                await this.saveFile(fileData);
+                this.renderFileList();
+                resolve();
             };
             
-            self.files.push(fileData);
-            self.renderFileList();
-            self.saveFiles();
-        };
+            reader.onerror = () => reject(reader.error);
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    async saveFile(fileData) {
+        return new Promise((resolve, reject) => {
+            const tx = this.db.transaction('files', 'readwrite');
+            const store = tx.objectStore('files');
+            const request = store.put(fileData);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    }
+    
+    async loadFiles() {
+        return new Promise((resolve, reject) => {
+            const tx = this.db.transaction('files', 'readonly');
+            const store = tx.objectStore('files');
+            const request = store.getAll();
+            
+            request.onsuccess = () => {
+                this.files = request.result || [];
+                this.files.sort((a, b) => {
+                    const dateA = new Date(a.date);
+                    const dateB = new Date(b.date);
+                    return dateA - dateB;
+                });
+                this.renderFileList();
+                resolve();
+            };
+            
+            request.onerror = () => reject(request.error);
+        });
+    }
+    
+    async deleteFile(index) {
+        if (!confirm('确定删除 "' + this.files[index].name + '" 吗？')) return;
         
-        reader.readAsDataURL(file);
+        const fileId = this.files[index].id;
+        this.files.splice(index, 1);
+        
+        return new Promise((resolve, reject) => {
+            const tx = this.db.transaction('files', 'readwrite');
+            const store = tx.objectStore('files');
+            const request = store.delete(fileId);
+            request.onsuccess = () => {
+                this.renderFileList();
+                resolve();
+            };
+            request.onerror = () => reject(request.error);
+        });
     }
     
     renderFileList() {
@@ -120,7 +194,7 @@ class FileManager {
         });
     }
     
-    moveToPosition(fromIndex) {
+    async moveToPosition(fromIndex) {
         const total = this.files.length;
         const currentPos = fromIndex + 1;
         
@@ -141,8 +215,12 @@ class FileManager {
         const movedFile = this.files.splice(fromIndex, 1)[0];
         this.files.splice(newIndex, 0, movedFile);
         
+        // 更新所有文件的排序
+        for (let i = 0; i < this.files.length; i++) {
+            await this.saveFile(this.files[i]);
+        }
+        
         this.renderFileList();
-        this.saveFiles();
     }
     
     showPreview(index) {
@@ -157,14 +235,6 @@ class FileManager {
         this.previewModal.classList.remove('active');
     }
     
-    deleteFile(index) {
-        if (confirm('确定删除 "' + this.files[index].name + '" 吗？')) {
-            this.files.splice(index, 1);
-            this.renderFileList();
-            this.saveFiles();
-        }
-    }
-    
     formatSize(bytes) {
         if (bytes < 1024) return bytes + ' B';
         if (bytes < 1024 * 1024) {
@@ -172,26 +242,6 @@ class FileManager {
             return kb >= 1 ? kb.toFixed(1) + ' KB' : bytes + ' B';
         }
         return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-    }
-    
-    saveFiles() {
-        try {
-            localStorage.setItem('skycallery_files', JSON.stringify(this.files));
-        } catch (e) {
-            console.warn('文件太大，无法保存到本地存储');
-        }
-    }
-    
-    loadFiles() {
-        try {
-            const saved = localStorage.getItem('skycallery_files');
-            if (saved) {
-                this.files = JSON.parse(saved);
-                this.renderFileList();
-            }
-        } catch (e) {
-            console.warn('无法加载已保存的文件');
-        }
     }
 }
 
