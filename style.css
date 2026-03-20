@@ -8,31 +8,28 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: #1a1a2e;
     color: #eee;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
 }
 
-.main-layout {
-    display: flex;
-    height: 100vh;
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-/* 左侧文件列表 */
+/* 文件列表 */
 .file-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
     background: #16213e;
-    border-right: 1px solid #0f3460;
-    min-width: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
 }
 
 .file-section h2, .upload-section h2 {
     padding: 20px 25px;
     font-size: 1.2rem;
     font-weight: 600;
-    background: #1a1a2e;
-    border-bottom: 1px solid #0f3460;
+    background: #0f3460;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -44,7 +41,7 @@ body {
 
 .file-list-header {
     display: grid;
-    grid-template-columns: 120px 1fr 100px 120px;
+    grid-template-columns: 150px 1fr 100px 120px;
     gap: 10px;
     padding: 15px 25px;
     background: #0f3460;
@@ -54,16 +51,15 @@ body {
 }
 
 .file-list {
-    flex: 1;
+    max-height: 500px;
     overflow-y: auto;
-    padding: 10px 0;
 }
 
 .file-item {
     display: grid;
-    grid-template-columns: 120px 1fr 100px 120px;
+    grid-template-columns: 150px 1fr 100px 120px;
     gap: 10px;
-    padding: 12px 25px;
+    padding: 15px 25px;
     align-items: center;
     border-bottom: 1px solid #0f3460;
     transition: background 0.2s;
@@ -74,8 +70,8 @@ body {
 }
 
 .file-thumb {
-    width: 120px;
-    height: 80px;
+    width: 150px;
+    height: 100px;
     object-fit: cover;
     border-radius: 8px;
     cursor: pointer;
@@ -117,9 +113,14 @@ body {
     color: #e94560;
 }
 
-.btn-up:hover, .btn-down:hover {
+.btn-up:hover:not(:disabled), .btn-down:hover:not(:disabled) {
     background: #e94560;
     color: white;
+}
+
+.btn-up:disabled, .btn-down:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
 .btn-delete {
@@ -138,16 +139,14 @@ body {
     color: #a0a0a0;
 }
 
-/* 右侧上传区域 */
+/* 上传区域 */
 .upload-section {
-    width: 400px;
-    display: flex;
-    flex-direction: column;
     background: #16213e;
+    border-radius: 16px;
 }
 
 .upload-zone {
-    flex: 1;
+    padding: 60px 20px;
     border: 3px dashed #0f3460;
     border-radius: 16px;
     margin: 20px;
@@ -168,20 +167,17 @@ body {
 .upload-zone.dragover {
     border-color: #e94560;
     background: rgba(233, 69, 96, 0.2);
-    transform: scale(1.02);
 }
 
 .upload-zone i {
-    font-size: 5rem;
+    font-size: 4rem;
     color: #e94560;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .upload-zone p {
     color: #a0a0a0;
     font-size: 1.1rem;
-    text-align: center;
-    padding: 0 20px;
 }
 
 .upload-zone input {
@@ -218,7 +214,6 @@ body {
     max-height: 90%;
     object-fit: contain;
     border-radius: 8px;
-    box-shadow: 0 0 30px rgba(233, 69, 96, 0.3);
 }
 
 .close-preview {
@@ -255,28 +250,25 @@ body {
 
 /* 响应式 */
 @media (max-width: 768px) {
-    .main-layout {
-        flex-direction: column;
-    }
-    
-    .upload-section {
-        width: 100%;
-        height: 200px;
-    }
-    
     .file-list-header {
-        grid-template-columns: 80px 1fr 80px;
-    }
-    .file-size {
         display: none;
     }
     
     .file-item {
-        grid-template-columns: 80px 1fr 80px;
+        grid-template-columns: 100px 1fr;
+        gap: 15px;
     }
     
     .file-thumb {
-        width: 80px;
-        height: 60px;
+        width: 100px;
+        height: 70px;
+    }
+    
+    .file-size {
+        display: none;
+    }
+    
+    .file-actions {
+        grid-column: 2;
     }
 }
