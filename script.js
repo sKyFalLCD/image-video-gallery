@@ -78,6 +78,7 @@ class FileManager {
                 <img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" onclick="fileManager.previewImage('${file.dataUrl}')">
                 <div class="file-name" title="${file.name}">${file.name}</div>
                 <div class="file-size">${this.formatSize(file.size)}</div>
+                <div class="file-date">${file.date}</div>
                 <div class="file-actions">
                     <button class="btn-up" onclick="fileManager.moveUp(${index})" ${index === 0 ? 'disabled' : ''}>↑</button>
                     <button class="btn-down" onclick="fileManager.moveDown(${index})" ${index === this.files.length - 1 ? 'disabled' : ''}>↓</button>
