@@ -349,8 +349,8 @@ class FileManager {
             request.onsuccess = () => {
                 this.files = request.result || [];
                 this.files.sort((a, b) => {
-                    const dateA = new Date(a.date);
-                    const dateB = new Date(b.date);
+                    const dateA = new Date(a.date || 0);
+                    const dateB = new Date(b.date || 0);
                     return dateA - dateB;
                 });
                 this.currentPage = 1;
