@@ -628,3 +628,30 @@ h1 i {
     border-bottom: 2px solid #667eea;
     gap: 10px;
 }
+
+/* Sort icon on RIGHT side */
+.col-order .sort-btn,
+.col-size .sort-btn,
+.col-date .sort-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.col-order .sort-btn i,
+.col-size .sort-btn i,
+.col-date .sort-btn i {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Increase order column width */
+.col-order {
+    width: 80px;
+    flex-shrink: 0;
+}
+
+/* Header checkbox styling */
+.file-list-header .col-check input {
+    width: 18px;
+    height: 18px;
+}
