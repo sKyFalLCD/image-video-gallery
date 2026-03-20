@@ -6,6 +6,8 @@ class FileManager {
         this.fileList = document.getElementById('fileList');
         this.previewModal = document.getElementById('previewModal');
         this.previewImg = document.getElementById('previewImage');
+        this.storageFill = document.getElementById('storageFill');
+        this.storageText = document.getElementById('storageText');
         this.db = null;
         
         this.init();
@@ -42,6 +44,9 @@ class FileManager {
         // 显示版本号
         const ver = document.getElementById('versionNum');
         if (ver) ver.textContent = ver.getAttribute('data-version') || '';
+        
+        // 显示存储空间
+        this.updateStorageBar();
     }
     
     openDB() {
@@ -88,6 +93,7 @@ class FileManager {
                 this.files.push(fileData);
                 await this.saveFile(fileData);
                 this.renderFileList();
+                this.updateStorageBar();
                 resolve();
             };
             
@@ -120,6 +126,7 @@ class FileManager {
                     return dateA - dateB;
                 });
                 this.renderFileList();
+                this.updateStorageBar();
                 resolve();
             };
             
@@ -139,10 +146,23 @@ class FileManager {
             const request = store.delete(fileId);
             request.onsuccess = () => {
                 this.renderFileList();
+                this.updateStorageBar();
                 resolve();
             };
             request.onerror = () => reject(request.error);
         });
+    }
+    
+    updateStorageBar() {
+        const totalSize = this.files.reduce((sum, f) => sum + f.size, 0);
+        const maxSize = 500 * 1024 * 1024; // 500MB
+        const percent = Math.min((totalSize / maxSize) * 100, 100);
+        
+        this.storageFill.style.width = percent + '%';
+        
+        const used = this.formatSize(totalSize);
+        const total = this.formatSize(maxSize);
+        this.storageText.textContent = used + ' / ' + total;
     }
     
     renderFileList() {
@@ -215,7 +235,6 @@ class FileManager {
         const movedFile = this.files.splice(fromIndex, 1)[0];
         this.files.splice(newIndex, 0, movedFile);
         
-        // 更新所有文件的排序
         for (let i = 0; i < this.files.length; i++) {
             await this.saveFile(this.files[i]);
         }
