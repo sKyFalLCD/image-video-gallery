@@ -9,16 +9,15 @@
 </head>
 <body>
     <div class="container">
-        <!-- 顶部标题 -->
         <h1 style="text-align:center;padding:20px 0;color:#fff;"><i class="fas fa-palette" style="color:#e94560;"></i> 老蔡的作品展示</h1>
 
-        <!-- 文件列表区域 -->
         <section class="file-section">
             <h2><i class="fas fa-list"></i> 文件列表</h2>
             <div class="file-list-header">
                 <span>缩略图</span>
                 <span>文件名</span>
                 <span>大小</span>
+                <span>上传时间</span>
                 <span>操作</span>
             </div>
             <div class="file-list" id="fileList">
@@ -26,7 +25,6 @@
             </div>
         </section>
 
-        <!-- 上传区域 -->
         <section class="upload-section">
             <h2><i class="fas fa-cloud-upload-alt"></i> 上传文件</h2>
             <div class="upload-zone" id="uploadZone">
@@ -37,11 +35,14 @@
         </section>
     </div>
 
-    <!-- 图片预览弹窗 -->
     <div class="preview-modal" id="previewModal">
         <span class="close-preview">&times;</span>
         <img class="preview-image" id="previewImage" src="" alt="预览">
     </div>
+
+    <footer class="version-footer">
+        <span id="versionNum"></span>
+    </footer>
 
     <script src="script.js"></script>
 </body>
