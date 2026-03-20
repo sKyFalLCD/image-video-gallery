@@ -79,19 +79,6 @@ h1 i {
     gap: 10px;
 }
 
-.col-check { width: 30px; flex-shrink: 0; }
-.col-order { width: 40px; flex-shrink: 0; text-align: center; }
-.col-thumb { width: 80px; flex-shrink: 0; }
-.col-name { flex: 1; min-width: 150px; }
-.col-type { width: 70px; flex-shrink: 0; }
-.col-filter { width: 90px; flex-shrink: 0; }
-.col-size { width: 80px; flex-shrink: 0; }
-.col-date { width: 150px; flex-shrink: 0; }
-.col-action { width: 100px; flex-shrink: 0; }
-.col-type { width: 60px; flex-shrink: 0; text-align: center; }
-.col-size { width: 80px; flex-shrink: 0; }
-.col-date { width: 140px; flex-shrink: 0; }
-.col-action { width: 80px; flex-shrink: 0; }
 
 .file-list {
     overflow-x: visible;
@@ -107,6 +94,17 @@ h1 i {
 }
 
 .file-item:hover {
+
+/* Column widths */
+.col-check { width: 50px; flex-shrink: 0; }
+.col-order { width: 60px; flex-shrink: 0; text-align: center; }
+.col-thumb { width: 100px; flex-shrink: 0; }
+.col-name { flex: 1; min-width: 200px; }
+.col-filter { width: 100px; flex-shrink: 0; }
+.col-size { width: 100px; flex-shrink: 0; }
+.col-date { width: 160px; flex-shrink: 0; }
+.col-action { width: 120px; flex-shrink: 0; }
+
     background: #1a1a2e;
 }
 
@@ -568,13 +566,11 @@ h1 i {
     font-size: 0.75rem;
 }
 
-.col-filter {
     display: flex;
     align-items: center;
 }
 
 /* Increase spacing between thumbnail and name */
-.col-thumb {
     margin-right: 15px;
 }
 
@@ -598,7 +594,6 @@ h1 i {
 }
 
 /* Better spacing between thumb and name */
-.col-thumb {
     margin-right: 30px;
 }
 
