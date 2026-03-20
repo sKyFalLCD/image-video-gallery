@@ -96,14 +96,14 @@ h1 i {
 .file-item:hover {
 
 /* Column widths */
-.col-check { width: 50px; flex-shrink: 0; }
-.col-order { width: 60px; flex-shrink: 0; text-align: center; }
-.col-thumb { width: 100px; flex-shrink: 0; }
-.col-name { flex: 1; min-width: 200px; }
-.col-filter { width: 100px; flex-shrink: 0; }
-.col-size { width: 100px; flex-shrink: 0; }
-.col-date { width: 160px; flex-shrink: 0; }
-.col-action { width: 120px; flex-shrink: 0; }
+.col-check { width: 40px; flex-shrink: 0; }
+.col-order { width: 50px; flex-shrink: 0; text-align: center; }
+.col-thumb { width: 70px; flex-shrink: 0; }
+.col-name { flex: 1; min-width: 180px; }
+.col-filter { width: 80px; flex-shrink: 0; }
+.col-size { width: 80px; flex-shrink: 0; }
+.col-date { width: 140px; flex-shrink: 0; }
+.col-action { width: 90px; flex-shrink: 0; }
 
     background: #1a1a2e;
 }
