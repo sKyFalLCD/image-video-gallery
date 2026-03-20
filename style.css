@@ -817,3 +817,66 @@ body {
         font-size: 1rem;
     }
 }
+/* 上传进度样式 */
+.upload-progress-global {
+    font-family: 'Inter', sans-serif;
+}
+
+.upload-progress-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #e9ecef;
+}
+
+.upload-progress-container:last-child {
+    margin-bottom: 0;
+}
+
+.upload-progress-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.upload-progress-info i {
+    color: #4361ee;
+    font-size: 14px;
+}
+
+.upload-file-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #333;
+}
+
+.upload-file-size {
+    color: #666;
+    font-size: 12px;
+}
+
+.upload-progress-bar {
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.upload-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4361ee, #3a0ca3);
+    border-radius: 3px;
+    transition: width 0.2s ease;
+}
+
+.upload-progress-text {
+    text-align: right;
+    font-size: 11px;
+    color: #666;
+    margin-top: 4px;
+}
