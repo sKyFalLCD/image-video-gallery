@@ -276,7 +276,7 @@ class FileManager {
             const file = pageFiles[i];
             const realIndex = this.files.indexOf(file);
             const isSelected = this.selectedFiles.has(file.id);
-            const typeIcon = file.type === 'video' ? '<i class="fas fa-video"></i>' : '<i class="fas fa-image"></i>';
+            const typeText = file.type === 'video' ? '视频' : '图片';
             const typeClass = file.type === 'video' ? 'type-video' : 'type-image';
             
             html += `
@@ -293,10 +293,10 @@ class FileManager {
                            </div>`
                     }
                     <div class="file-name" title="${file.originalName}">${file.name}</div>
-                    <div class="file-type ${typeClass}">${typeIcon}</div>
+                    <div class="file-type ${typeClass}">${typeText}</div>
                     <div class="file-size">${this.formatSize(file.size)}</div>
                     <div class="file-date">${file.date}</div>
-                    <div class="file-actions">
+                    <div class="file-action-btns">
                         <button class="btn-icon" onclick="fileManager.moveToPosition(${realIndex})" title="排序">
                             <i class="fas fa-sort"></i>
                         </button>
