@@ -115,6 +115,14 @@ class FileManager {
             await this.loadFiles();
             
             // Filter buttons - use document for dynamically added elements
+            // Footer selectAll change handler
+            const selectAllFooter = document.getElementById('selectAllFooter');
+            if (selectAllFooter) {
+                selectAllFooter.addEventListener('change', () => {
+                    this.toggleSelectAll();
+                });
+            }
+            
             // Filter dropdown
             const filterSelect = document.getElementById('filterSelect');
             if (filterSelect) {
@@ -554,7 +562,7 @@ class FileManager {
         }
         
         html += '<div class="file-list-footer">';
-        html += '<label class="select-all-label"><input type="checkbox" id="selectAll">全选</label>';
+        html += '<label class="select-all-label"><input type="checkbox" id="selectAllFooter">全选</label>';
         html += '<button class="btn-batch-delete"><i class="fas fa-trash-alt"></i> 批量删除</button>';
         html += '<div class="pagination">';
         html += '<span class="page-label">每页</span><input type="number" id="pageSizeInput" value="' + this.pageSize + '" min="1" max="10"><span class="page-label">个</span>';
