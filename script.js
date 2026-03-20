@@ -172,8 +172,9 @@ class ImageManager {
         this.closeImageModal = document.querySelector('.close-image-modal');
         this.modalImage = document.getElementById('modalImage');
         
-        // 存储上传的图片
+        // 存储上传的图片和视频
         this.uploadedImages = [];
+        this.uploadedVideos = [];
         
         this.init();
     }
@@ -265,7 +266,7 @@ class ImageManager {
                 continue;
             }
             
-            alert(`视频文件 "${file.name}" 已选择，大小: ${this.formatFileSize(file.size)}`);
+            this.addVideoToList(file);
         }
         
         // 重置文件输入
@@ -273,7 +274,17 @@ class ImageManager {
     }
     
     addImageToList(file) {
+        // 显示上传中状态
+        this.showUploadProgress(file.name, file.size, 'image');
+        
         const reader = new FileReader();
+        
+        reader.onprogress = (e) => {
+            if (e.lengthComputable) {
+                const progress = Math.round((e.loaded / e.total) * 100);
+                this.updateUploadProgress(file.name, progress);
+            }
+        };
         
         reader.onload = (e) => {
             const imageData = {
@@ -287,11 +298,148 @@ class ImageManager {
             this.uploadedImages.push(imageData);
             this.renderImageList();
             
+            // 移除进度显示
+            this.hideUploadProgress(file.name);
+            
             // 显示成功消息
             this.showUploadSuccess(file.name);
         };
         
+        reader.onerror = () => {
+            this.hideUploadProgress(file.name);
+            this.showUploadError(file.name);
+        };
+        
         reader.readAsDataURL(file);
+    }
+    
+    addVideoToList(file) {
+        // 显示上传中状态
+        this.showUploadProgress(file.name, file.size, 'video');
+        
+        const reader = new FileReader();
+        
+        reader.onprogress = (e) => {
+            if (e.lengthComputable) {
+                const progress = Math.round((e.loaded / e.total) * 100);
+                this.updateUploadProgress(file.name, progress);
+            }
+        };
+        
+        reader.onload = (e) => {
+            const videoData = {
+                id: Date.now() + Math.random(),
+                name: file.name,
+                size: file.size,
+                time: new Date().toLocaleString(),
+                dataUrl: e.target.result,
+                type: 'local'
+            };
+            
+            this.uploadedVideos.push(videoData);
+            this.renderVideoList();
+            
+            // 移除进度显示
+            this.hideUploadProgress(file.name);
+            
+            // 显示成功消息
+            this.showUploadSuccess(file.name);
+        };
+        
+        reader.onerror = () => {
+            this.hideUploadProgress(file.name);
+            this.showUploadError(file.name);
+        };
+        
+        reader.readAsDataURL(file);
+    }
+    
+    showUploadProgress(fileName, fileSize, type) {
+        // 创建进度显示元素
+        const progressId = 'upload-progress-' + Date.now();
+        const progressHTML = `
+            <div class="upload-progress-container" id="${progressId}">
+                <div class="upload-progress-info">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span class="upload-file-name">${fileName}</span>
+                    <span class="upload-file-size">${this.formatFileSize(fileSize)}</span>
+                </div>
+                <div class="upload-progress-bar">
+                    <div class="upload-progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="upload-progress-text">0%</div>
+            </div>
+        `;
+        
+        // 添加到进度容器
+        const container = document.getElementById('uploadProgressContainer') || this.createProgressContainer();
+        container.insertAdjacentHTML('beforeend', progressHTML);
+        container.style.display = 'block';
+    }
+    
+    updateUploadProgress(fileName, progress) {
+        const containers = document.querySelectorAll('.upload-progress-container');
+        containers.forEach(container => {
+            const nameSpan = container.querySelector('.upload-file-name');
+            if (nameSpan && nameSpan.textContent === fileName) {
+                const fill = container.querySelector('.upload-progress-fill');
+                const text = container.querySelector('.upload-progress-text');
+                if (fill) fill.style.width = progress + '%';
+                if (text) text.textContent = progress + '%';
+            }
+        });
+    }
+    
+    hideUploadProgress(fileName) {
+        const containers = document.querySelectorAll('.upload-progress-container');
+        containers.forEach(container => {
+            const nameSpan = container.querySelector('.upload-file-name');
+            if (nameSpan && nameSpan.textContent === fileName) {
+                container.remove();
+            }
+        });
+        
+        // 如果没有进度了，隐藏容器
+        const container = document.getElementById('uploadProgressContainer');
+        if (container && container.querySelectorAll('.upload-progress-container').length === 0) {
+            container.style.display = 'none';
+        }
+    }
+    
+    showUploadError(fileName) {
+        const containers = document.querySelectorAll('.upload-progress-container');
+        containers.forEach(container => {
+            const nameSpan = container.querySelector('.upload-file-name');
+            if (nameSpan && nameSpan.textContent === fileName) {
+                container.querySelector('.upload-progress-info').innerHTML = 
+                    `<i class="fas fa-times-circle" style="color:#f72585"></i>
+                     <span class="upload-file-name" style="color:#f72585">${fileName} - 上传失败</span>`;
+                container.querySelector('.upload-progress-bar').style.display = 'none';
+                container.querySelector('.upload-progress-text').remove();
+            }
+        });
+    }
+    
+    createProgressContainer() {
+        const container = document.createElement('div');
+        container.id = 'uploadProgressContainer';
+        container.className = 'upload-progress-global';
+        container.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 15px;
+            z-index: 10000;
+            display: none;
+        `;
+        document.body.appendChild(container);
+        return container;
     }
     
     renderImageList() {
@@ -325,6 +473,62 @@ class ImageManager {
         
         // 绑定操作按钮事件
         this.bindImageActions();
+    }
+    
+    renderVideoList() {
+        // 更新视频网格显示已上传的视频
+        const videoItems = document.querySelectorAll('.video-item');
+        
+        this.uploadedVideos.forEach((video, index) => {
+            if (index < videoItems.length) {
+                const item = videoItems[index];
+                item.classList.remove('empty-video');
+                item.innerHTML = `
+                    <div class="video-thumbnail" style="background: #000;">
+                        <video src="${video.dataUrl}" style="width:100%;height:100%;object-fit:cover;"></video>
+                        <div class="play-overlay"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="video-info">
+                        <h4>${video.name}</h4>
+                        <p>${this.formatFileSize(video.size)}</p>
+                    </div>
+                    <button class="action-btn delete-btn" data-index="${index}" style="position:absolute;top:5px;right:5px;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                item.style.position = 'relative';
+                
+                // 绑定点击播放事件
+                item.querySelector('.video-thumbnail').addEventListener('click', () => {
+                    this.playLocalVideo(index);
+                });
+                
+                // 绑定删除事件
+                item.querySelector('.delete-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.deleteVideo(index);
+                });
+            }
+        });
+    }
+    
+    playLocalVideo(index) {
+        const video = this.uploadedVideos[index];
+        const modal = document.getElementById('videoModal');
+        const iframe = document.getElementById('videoFrame');
+        
+        iframe.src = '';
+        iframe.src = video.dataUrl;
+        modal.classList.add('active');
+    }
+    
+    deleteVideo(index) {
+        const video = this.uploadedVideos[index];
+        if (confirm(`确定要删除视频 "${video.name}" 吗？`)) {
+            this.uploadedVideos.splice(index, 1);
+            this.renderVideoList();
+            alert('视频已删除');
+        }
     }
     
     bindImageActions() {
