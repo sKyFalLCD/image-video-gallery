@@ -13,7 +13,7 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
@@ -96,7 +96,7 @@ h1 i {
 .col-action { width: 80px; flex-shrink: 0; }
 
 .file-list {
-    overflow-x: auto;
+    overflow-x: visible;
 }
 
 .file-item {
@@ -708,7 +708,7 @@ h1 i {
 
 /* Prevent overflow */
 .file-list {
-    overflow-x: auto;
+    overflow-x: visible;
     max-width: 100%;
 }
 
@@ -732,4 +732,18 @@ h1 i {
     gap: 15px;
     flex-wrap: wrap;
     padding: 10px;
+}
+
+/* Ensure columns don't overflow */
+.file-list-header, .file-item {
+    min-width: 100%;
+    max-width: 100%;
+}
+
+/* Truncate long file names */
+.file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
 }
