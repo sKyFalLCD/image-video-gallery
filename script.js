@@ -592,9 +592,11 @@ class FileManager {
         
         html += '<div class="file-list-footer">';
         
+        html += '<div class="footer-actions">';
         html += '<button class="btn-batch-download"><i class="fas fa-download"></i> 批量下载</button>';
-        html += '<span class="footer-file-count" id="footerFileCount"></span>';
         html += '<button class="btn-batch-delete"><i class="fas fa-trash-alt"></i> 批量删除</button>';
+        html += '</div>';
+        html += '<span class="footer-file-count" id="footerFileCount"></span>';
         html += '<div class="pagination">';
         html += '<span class="page-label">每页</span><input type="number" id="pageSizeInput" value="' + this.pageSize + '" min="1" max="10"><span class="page-label">个</span>';
         html += '<button class="btn-page btn-page-nav" data-page="' + (this.currentPage - 1) + '" ' + (this.currentPage === 1 ? 'disabled' : '') + '><i class="fas fa-chevron-left"></i></button>';
