@@ -11,10 +11,8 @@ class FileManager {
     }
     
     init() {
-        // 文件选择
         this.fileInput.addEventListener('change', (e) => this.handleFiles(e.target.files));
         
-        // 拖拽上传
         this.uploadZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             this.uploadZone.classList.add('dragover');
@@ -30,21 +28,12 @@ class FileManager {
             this.handleFiles(e.dataTransfer.files);
         });
         
-        // 预览关闭
-        this.previewModal.addEventListener('click', (e) => {
-            if (e.target === this.previewModal || e.target.classList.contains('close-preview')) {
-                this.closePreview();
-            }
-        });
+        this.previewModal.addEventListener('click', () => this.closePreview());
         
-        // ESC键关闭预览
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.previewModal.classList.contains('active')) {
-                this.closePreview();
-            }
+            if (e.key === 'Escape') this.closePreview();
         });
         
-        // 加载已保存的文件
         this.loadFiles();
     }
     
@@ -84,40 +73,62 @@ class FileManager {
             return;
         }
         
-        this.fileList.innerHTML = this.files.map((file, index) => `
-            <div class="file-item" data-id="${file.id}">
-                <img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" data-url="${file.dataUrl}">
-                <div class="file-name" title="${file.name}">${file.name}</div>
-                <div class="file-size">${this.formatSize(file.size)}</div>
-                <div class="file-date">${file.date}</div>
-                <div class="file-actions">
-                    <button class="btn-up" data-index="${index}" ${index === 0 ? 'disabled' : ''}>↑</button>
-                    <button class="btn-down" data-index="${index}" ${index === this.files.length - 1 ? 'disabled' : ''}>↓</button>
-                    <button class="btn-delete" data-index="${index}">删除</button>
+        let html = '';
+        for (let i = 0; i < this.files.length; i++) {
+            const file = this.files[i];
+            html += `
+                <div class="file-item" data-id="${file.id}" data-index="${i}">
+                    <img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" data-index="${i}">
+                    <div class="file-name" title="${file.name}">${file.name}</div>
+                    <div class="file-size">${this.formatSize(file.size)}</div>
+                    <div class="file-date">${file.date}</div>
+                    <div class="file-actions">
+                        <button class="btn-up" data-index="${i}" ${i === 0 ? 'disabled' : ''}>↑</button>
+                        <button class="btn-down" data-index="${i}" ${i === this.files.length - 1 ? 'disabled' : ''}>↓</button>
+                        <button class="btn-delete" data-index="${i}">删除</button>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }
+        this.fileList.innerHTML = html;
         
-        // 绑定缩略图点击事件
-        this.fileList.querySelectorAll('.file-thumb').forEach(img => {
-            img.addEventListener('click', () => this.previewImage(img.dataset.url));
+        // 绑定事件
+        const self = this;
+        this.fileList.querySelectorAll('.file-thumb').forEach(function(img) {
+            img.addEventListener('click', function() {
+                const idx = parseInt(this.getAttribute('data-index'));
+                self.previewImage(idx);
+            });
         });
         
-        // 绑定按钮事件
-        this.fileList.querySelectorAll('.btn-up').forEach(btn => {
-            btn.addEventListener('click', () => this.moveUp(parseInt(btn.dataset.index)));
+        this.fileList.querySelectorAll('.btn-up').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const idx = parseInt(this.getAttribute('data-index'));
+                self.moveUp(idx);
+            });
         });
-        this.fileList.querySelectorAll('.btn-down').forEach(btn => {
-            btn.addEventListener('click', () => this.moveDown(parseInt(btn.dataset.index)));
+        
+        this.fileList.querySelectorAll('.btn-down').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const idx = parseInt(this.getAttribute('data-index'));
+                self.moveDown(idx);
+            });
         });
-        this.fileList.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', () => this.deleteFile(parseInt(btn.dataset.index)));
+        
+        this.fileList.querySelectorAll('.btn-delete').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const idx = parseInt(this.getAttribute('data-index'));
+                self.deleteFile(idx);
+            });
         });
     }
     
-    previewImage(dataUrl) {
-        this.previewImage.src = dataUrl;
-        this.previewModal.classList.add('active');
+    previewImage(index) {
+        const file = this.files[index];
+        if (file && file.type === 'image') {
+            this.previewImage.src = file.dataUrl;
+            this.previewModal.classList.add('active');
+        }
     }
     
     closePreview() {
