@@ -35,6 +35,10 @@ class FileManager {
         });
         
         this.loadFiles();
+        
+        // 显示版本号（从HTML属性读取）
+        const ver = document.getElementById('versionNum');
+        if (ver) ver.textContent = ver.getAttribute('data-version') || '';
     }
     
     handleFiles(fileList) {
@@ -59,7 +63,6 @@ class FileManager {
                 dataUrl: e.target.result
             };
             
-            // 新文件默认排在最后
             self.files.push(fileData);
             self.renderFileList();
             self.saveFiles();
@@ -79,6 +82,7 @@ class FileManager {
             const file = this.files[i];
             html += `
                 <div class="file-item" data-id="${file.id}" data-index="${i}">
+                    <div class="file-order">${i + 1}</div>
                     <img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" data-index="${i}">
                     <div class="file-name" title="${file.name}">${file.name}</div>
                     <div class="file-size">${this.formatSize(file.size)}</div>
@@ -120,9 +124,9 @@ class FileManager {
         const total = this.files.length;
         const currentPos = fromIndex + 1;
         
-        const newPosStr = prompt(`当前排在第 ${currentPos} 位，请输入新的排序位置（1-${total}）：`, currentPos);
+        const newPosStr = prompt('当前排在第 ' + currentPos + ' 位，请输入新的排序位置（1-' + total + '）：', currentPos);
         
-        if (newPosStr === null) return; // 用户取消
+        if (newPosStr === null) return;
         
         const newPos = parseInt(newPosStr);
         
@@ -131,20 +135,11 @@ class FileManager {
             return;
         }
         
-        if (newPos === currentPos) return; // 位置没变
+        if (newPos === currentPos) return;
         
         const newIndex = newPos - 1;
-        
-        // 移动文件
         const movedFile = this.files.splice(fromIndex, 1)[0];
-        
-        if (newPos > fromIndex) {
-            // 向后移动：插入到目标位置（因为已经删除了原位置的元素，所以要-1）
-            this.files.splice(newIndex, 0, movedFile);
-        } else {
-            // 向前移动：直接插入到目标位置
-            this.files.splice(newIndex, 0, movedFile);
-        }
+        this.files.splice(newIndex, 0, movedFile);
         
         this.renderFileList();
         this.saveFiles();
@@ -163,7 +158,7 @@ class FileManager {
     }
     
     deleteFile(index) {
-        if (confirm(`确定删除 "${this.files[index].name}" 吗？`)) {
+        if (confirm('确定删除 "' + this.files[index].name + '" 吗？')) {
             this.files.splice(index, 1);
             this.renderFileList();
             this.saveFiles();
@@ -201,4 +196,3 @@ class FileManager {
 }
 
 const fileManager = new FileManager();
-document.getElementById('versionNum').textContent = 'v1.0.202603201556';
