@@ -770,3 +770,17 @@ h1 i {
 .col-check:empty {
     width: 50px;
 }
+
+/* Footer file count centered */
+.footer-file-count {
+    color: #a0a0a0;
+    font-size: 0.9rem;
+    flex: 1;
+    text-align: center;
+}
+
+/* File list footer layout */
+.file-list-footer {
+    justify-content: center;
+    gap: 20px;
+}
