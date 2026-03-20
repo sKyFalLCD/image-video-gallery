@@ -11,7 +11,6 @@ class FileManager {
         this.previewImg = document.getElementById('previewImage');
         this.storageFill = document.getElementById('storageFill');
         this.storageText = document.getElementById('storageText');
-        this.selectAllCheckbox = null;
         this.db = null;
         
         this.init();
@@ -39,6 +38,72 @@ class FileManager {
             });
             
             this.previewModal.addEventListener('click', () => this.closePreview());
+            
+            // 事件委托
+            this.fileList.addEventListener('click', (e) => {
+                const target = e.target;
+                
+                // 全选
+                if (target.id === 'selectAll') {
+                    this.toggleSelectAll();
+                    return;
+                }
+                
+                // 单选
+                if (target.type === 'checkbox' && target.dataset.fileId) {
+                    this.toggleSelect(target.dataset.fileId);
+                    return;
+                }
+                
+                // 排序按钮
+                if (target.closest('.btn-move')) {
+                    const idx = parseInt(target.closest('.btn-move').dataset.index);
+                    this.moveToPosition(idx);
+                    return;
+                }
+                
+                // 删除按钮
+                if (target.closest('.btn-delete')) {
+                    const idx = parseInt(target.closest('.btn-delete').dataset.index);
+                    this.deleteFile(idx);
+                    return;
+                }
+                
+                // 缩略图点击
+                if (target.classList.contains('file-thumb') || target.closest('.file-thumb')) {
+                    const el = target.classList.contains('file-thumb') ? target : target.closest('.file-thumb');
+                    const idx = parseInt(el.dataset.index);
+                    this.showPreview(idx);
+                    return;
+                }
+            });
+            
+            // 分页输入跳转
+            this.fileList.addEventListener('change', (e) => {
+                if (e.target.id === 'pageSizeInput') {
+                    this.changePageSize();
+                }
+                if (e.target.id === 'pageInput') {
+                    const page = parseInt(e.target.value);
+                    if (!isNaN(page)) this.goToPage(page);
+                    e.target.value = '';
+                }
+            });
+            
+            // 批量删除
+            this.fileList.addEventListener('click', (e) => {
+                if (e.target.closest('.btn-batch-delete')) {
+                    this.deleteSelected();
+                }
+            });
+            
+            // 上一页下一页
+            this.fileList.addEventListener('click', (e) => {
+                if (e.target.closest('.btn-page-nav')) {
+                    const page = parseInt(e.target.closest('.btn-page-nav').dataset.page);
+                    if (!isNaN(page)) this.goToPage(page);
+                }
+            });
             
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') this.closePreview();
@@ -149,7 +214,7 @@ class FileManager {
         
         const fileId = this.files[index].id;
         this.files.splice(index, 1);
-        this.selectedFiles.delete(fileId);
+        this.selectedFiles.delete(String(fileId));
         
         return new Promise((resolve, reject) => {
             const tx = this.db.transaction('files', 'readwrite');
@@ -179,28 +244,30 @@ class FileManager {
             await new Promise((resolve, reject) => {
                 const tx = this.db.transaction('files', 'readwrite');
                 const store = tx.objectStore('files');
-                store.delete(fileId);
+                store.delete(Number(fileId));
                 tx.oncomplete = resolve;
                 tx.onerror = reject;
             });
         }
         
-        this.files = this.files.filter(f => !this.selectedFiles.has(f.id));
+        this.files = this.files.filter(f => !this.selectedFiles.has(String(f.id)));
         this.selectedFiles.clear();
         this.renderFileList();
         this.updateStorageBar();
     }
     
     toggleSelectAll() {
-        if (this.selectAllCheckbox && this.selectAllCheckbox.checked) {
-            this.getCurrentPageFiles().forEach(f => this.selectedFiles.add(f.id));
+        const checkbox = document.getElementById('selectAll');
+        if (checkbox && checkbox.checked) {
+            this.getCurrentPageFiles().forEach(f => this.selectedFiles.add(String(f.id)));
         } else {
-            this.getCurrentPageFiles().forEach(f => this.selectedFiles.delete(f.id));
+            this.getCurrentPageFiles().forEach(f => this.selectedFiles.delete(String(f.id)));
         }
         this.renderFileList();
     }
     
     toggleSelect(fileId) {
+        fileId = String(fileId);
         if (this.selectedFiles.has(fileId)) {
             this.selectedFiles.delete(fileId);
         } else {
@@ -224,16 +291,6 @@ class FileManager {
         this.currentPage = Math.max(1, Math.min(page, totalPages));
         this.selectedFiles.clear();
         this.renderFileList();
-    }
-    
-    goToPageInput() {
-        const input = document.getElementById('pageInput');
-        if (!input) return;
-        const page = parseInt(input.value);
-        if (!isNaN(page)) {
-            this.goToPage(page);
-        }
-        input.value = '';
     }
     
     changePageSize() {
@@ -279,7 +336,7 @@ class FileManager {
         for (let i = 0; i < pageFiles.length; i++) {
             const file = pageFiles[i];
             const realIndex = this.files.indexOf(file);
-            const isSelected = this.selectedFiles.has(file.id);
+            const isSelected = this.selectedFiles.has(String(file.id));
             const typeText = file.type === 'video' ? '视频' : '图片';
             const typeClass = file.type === 'video' ? 'type-video' : 'type-image';
             
@@ -291,7 +348,7 @@ class FileManager {
             }
             
             html += '<div class="file-item" data-id="' + file.id + '" data-index="' + realIndex + '">';
-            html += '<div class="file-checkbox"><input type="checkbox" ' + (isSelected ? 'checked' : '') + ' onchange="fileManager.toggleSelect(\'' + file.id + '\')"></div>';
+            html += '<div class="file-checkbox"><input type="checkbox" ' + (isSelected ? 'checked' : '') + ' data-file-id="' + file.id + '"></div>';
             html += '<div class="file-order">' + (realIndex + 1) + '</div>';
             html += thumbHtml;
             html += '<div class="file-name" title="' + file.originalName + '">' + file.name + '</div>';
@@ -299,40 +356,40 @@ class FileManager {
             html += '<div class="file-size">' + this.formatSize(file.size) + '</div>';
             html += '<div class="file-date">' + file.date + '</div>';
             html += '<div class="file-action-btns">';
-            html += '<button class="btn-icon" onclick="fileManager.moveToPosition(' + realIndex + ')" title="排序"><i class="fas fa-sort"></i></button>';
-            html += '<button class="btn-icon btn-icon-delete" onclick="fileManager.deleteFile(' + realIndex + ')" title="删除"><i class="fas fa-trash-alt"></i></button>';
+            html += '<button class="btn-icon btn-move" data-index="' + realIndex + '" title="排序"><i class="fas fa-sort"></i></button>';
+            html += '<button class="btn-icon btn-delete" data-index="' + realIndex + '" title="删除"><i class="fas fa-trash-alt"></i></button>';
             html += '</div></div>';
         }
         
         html += '<div class="file-list-footer">';
-        html += '<label class="select-all-label"><input type="checkbox" id="selectAll" onchange="fileManager.toggleSelectAll()">全选</label>';
-        html += '<button class="btn-batch-delete" onclick="fileManager.deleteSelected()"><i class="fas fa-trash-alt"></i> 批量删除</button>';
+        html += '<label class="select-all-label"><input type="checkbox" id="selectAll">全选</label>';
+        html += '<button class="btn-batch-delete"><i class="fas fa-trash-alt"></i> 批量删除</button>';
         html += '<div class="pagination">';
         html += '<span class="page-label">每页</span>';
-        html += '<input type="number" id="pageSizeInput" value="' + this.pageSize + '" min="1" max="10" onchange="fileManager.changePageSize()">';
+        html += '<input type="number" id="pageSizeInput" value="' + this.pageSize + '" min="1" max="10">';
         html += '<span class="page-label">个</span>';
-        html += '<button class="btn-page" onclick="fileManager.goToPage(' + (this.currentPage - 1) + ')" ' + (this.currentPage === 1 ? 'disabled' : '') + '><i class="fas fa-chevron-left"></i></button>';
+        html += '<button class="btn-page btn-page-nav" data-page="' + (this.currentPage - 1) + '" ' + (this.currentPage === 1 ? 'disabled' : '') + '><i class="fas fa-chevron-left"></i></button>';
         html += '<span class="page-info">' + this.currentPage + ' / ' + totalPages + '</span>';
-        html += '<button class="btn-page" onclick="fileManager.goToPage(' + (this.currentPage + 1) + ')" ' + (this.currentPage === totalPages ? 'disabled' : '') + '><i class="fas fa-chevron-right"></i></button>';
-        html += '<input type="number" id="pageInput" placeholder="跳转" min="1" max="' + totalPages + '">';
-        html += '<button class="btn-page" onclick="fileManager.goToPageInput()">跳转</button>';
+        html += '<button class="btn-page btn-page-nav" data-page="' + (this.currentPage + 1) + '" ' + (this.currentPage === totalPages ? 'disabled' : '') + '><i class="fas fa-chevron-right"></i></button>';
+        html += '<input type="number" id="pageInput" placeholder="跳转" min="1">';
+        html += '<button class="btn-page" id="jumpBtn">跳转</button>';
         html += '</div></div>';
         
         this.fileList.innerHTML = html;
-        this.selectAllCheckbox = document.getElementById('selectAll');
         
-        if (this.selectAllCheckbox) {
+        // 设置全选状态
+        const selectAll = document.getElementById('selectAll');
+        if (selectAll) {
             const pageFilesCheck = this.getCurrentPageFiles();
-            this.selectAllCheckbox.checked = pageFilesCheck.length > 0 && pageFilesCheck.every(f => this.selectedFiles.has(f.id));
+            selectAll.checked = pageFilesCheck.length > 0 && pageFilesCheck.every(f => this.selectedFiles.has(String(f.id)));
         }
         
-        const self = this;
-        this.fileList.querySelectorAll('.file-thumb').forEach(function(el) {
-            el.style.cursor = 'pointer';
-            el.addEventListener('click', function() {
-                const idx = parseInt(this.getAttribute('data-index'));
-                self.showPreview(idx);
-            });
+        // 跳转按钮事件
+        document.getElementById('jumpBtn').addEventListener('click', () => {
+            const input = document.getElementById('pageInput');
+            const page = parseInt(input.value);
+            if (!isNaN(page)) this.goToPage(page);
+            input.value = '';
         });
     }
     
