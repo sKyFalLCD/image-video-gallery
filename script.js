@@ -118,6 +118,14 @@ class FileManager {
             
             await this.loadFiles();
             
+            // Footer selectAll change event
+            const self = this;
+            document.addEventListener('change', function(e) {
+                if (e.target.id === 'selectAllFooter') {
+                    self.toggleSelectAll();
+                }
+            });
+            
             // Sort buttons in header (document-level for delegation)
             document.addEventListener('click', (e) => {
                 if (e.target.closest('.sort-btn')) {
