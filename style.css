@@ -97,13 +97,13 @@ h1 i {
 
 /* Column widths */
 .col-check { width: 40px; flex-shrink: 0; }
-.col-order { width: 50px; flex-shrink: 0; text-align: center; }
-.col-thumb { width: 70px; flex-shrink: 0; }
-.col-name { flex: 1; min-width: 180px; }
-.col-filter { width: 80px; flex-shrink: 0; }
-.col-size { width: 80px; flex-shrink: 0; }
+.col-order { width: 55px; flex-shrink: 0; text-align: center; }
+.col-thumb { width: 80px; flex-shrink: 0; }
+.col-name { flex: 1; min-width: 200px; }
+.col-filter { width: 85px; flex-shrink: 0; }
+.col-size { width: 90px; flex-shrink: 0; }
 .col-date { width: 140px; flex-shrink: 0; }
-.col-action { width: 90px; flex-shrink: 0; }
+.col-action { width: 100px; flex-shrink: 0; }
 
     background: #1a1a2e;
 }
@@ -772,6 +772,14 @@ h1 i {
 }
 
 /* Footer file count centered */
+
+/* Footer actions group */
+.footer-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 .footer-file-count {
     color: #a0a0a0;
     font-size: 0.9rem;
