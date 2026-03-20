@@ -675,7 +675,7 @@ class FileManager {
     
     
     setSearch(query) {
-        this.searchQuery = query;
+        this.searchQuery = query.trim();
         this.currentPage = 1;
         this.selectedFiles.clear();
         this.renderFileList();
