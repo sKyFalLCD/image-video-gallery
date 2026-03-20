@@ -52,7 +52,7 @@ h1 i {
 
 .file-list-header {
     display: grid;
-    grid-template-columns: 150px 1fr 100px 150px 120px;
+    grid-template-columns: 50px 150px 1fr 100px 150px 120px;
     gap: 10px;
     padding: 15px 25px;
     background: #0f3460;
@@ -68,7 +68,7 @@ h1 i {
 
 .file-item {
     display: grid;
-    grid-template-columns: 150px 1fr 100px 150px 120px;
+    grid-template-columns: 50px 150px 1fr 100px 150px 120px;
     gap: 10px;
     padding: 15px 25px;
     align-items: center;
@@ -78,6 +78,13 @@ h1 i {
 
 .file-item:hover {
     background: #1a1a2e;
+}
+
+.file-order {
+    text-align: center;
+    font-weight: 600;
+    color: #e94560;
+    font-size: 1.1rem;
 }
 
 .file-thumb {
@@ -119,19 +126,14 @@ h1 i {
     transition: all 0.2s;
 }
 
-.btn-up, .btn-down {
+.btn-move {
     background: #0f3460;
     color: #e94560;
 }
 
-.btn-up:hover:not(:disabled), .btn-down:hover:not(:disabled) {
+.btn-move:hover {
     background: #e94560;
     color: white;
-}
-
-.btn-up:disabled, .btn-down:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
 }
 
 .btn-delete {
@@ -265,8 +267,8 @@ h1 i {
     }
     
     .file-item {
-        grid-template-columns: 100px 1fr;
-        gap: 15px;
+        grid-template-columns: 40px 100px 1fr;
+        gap: 10px;
     }
     
     .file-thumb {
@@ -279,6 +281,10 @@ h1 i {
     }
     
     .file-actions {
-        grid-column: 2;
+        grid-column: 3;
+    }
+    
+    .file-order {
+        font-size: 0.9rem;
     }
 }
