@@ -2,6 +2,8 @@ class FileManager {
     constructor() {
         this.files = [];
         this.selectedFiles = new Set();
+        this.pageSize = 10;
+        this.currentPage = 1;
         this.fileInput = document.getElementById('fileInput');
         this.uploadZone = document.getElementById('uploadZone');
         this.fileList = document.getElementById('fileList');
@@ -125,6 +127,7 @@ class FileManager {
                     const dateB = new Date(b.date);
                     return dateA - dateB;
                 });
+                this.currentPage = 1;
                 this.renderFileList();
                 this.updateStorageBar();
                 resolve();
@@ -183,9 +186,9 @@ class FileManager {
     
     toggleSelectAll() {
         if (this.selectAllCheckbox && this.selectAllCheckbox.checked) {
-            this.files.forEach(f => this.selectedFiles.add(f.id));
+            this.getCurrentPageFiles().forEach(f => this.selectedFiles.add(f.id));
         } else {
-            this.selectedFiles.clear();
+            this.getCurrentPageFiles().forEach(f => this.selectedFiles.delete(f.id));
         }
         this.renderFileList();
     }
@@ -197,10 +200,25 @@ class FileManager {
             this.selectedFiles.add(fileId);
         }
         
-        // 更新全选状态
         if (this.selectAllCheckbox) {
-            this.selectAllCheckbox.checked = this.selectedFiles.size === this.files.length;
+            const pageFiles = this.getCurrentPageFiles();
+            this.selectAllCheckbox.checked = pageFiles.length > 0 && pageFiles.every(f => this.selectedFiles.has(f.id));
         }
+    }
+    
+    getCurrentPageFiles() {
+        const start = 0;
+        const end = this.pageSize;
+        return this.files.slice(start, end);
+    }
+    
+    getTotalPages() {
+        return Math.ceil(this.files.length / this.pageSize);
+    }
+    
+    goToPage(page) {
+        this.currentPage = Math.max(1, Math.min(page, this.getTotalPages()));
+        this.renderFileList();
     }
     
     updateStorageBar() {
@@ -221,8 +239,41 @@ class FileManager {
             return;
         }
         
-        let html = `
-            <div class="file-list-toolbar">
+        const start = 0;
+        const end = this.pageSize;
+        const pageFiles = this.files.slice(start, end);
+        const totalPages = this.getTotalPages();
+        
+        let html = '';
+        
+        for (let i = 0; i < pageFiles.length; i++) {
+            const file = pageFiles[i];
+            const realIndex = this.files.indexOf(file);
+            const isSelected = this.selectedFiles.has(file.id);
+            html += `
+                <div class="file-item" data-id="${file.id}" data-index="${realIndex}">
+                    <div class="file-checkbox">
+                        <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="fileManager.toggleSelect('${file.id}')">
+                    </div>
+                    <div class="file-order">${realIndex + 1}</div>
+                    <img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" data-index="${realIndex}">
+                    <div class="file-name" title="${file.name}">${file.name}</div>
+                    <div class="file-size">${this.formatSize(file.size)}</div>
+                    <div class="file-date">${file.date}</div>
+                    <div class="file-actions">
+                        <button class="btn-icon" onclick="fileManager.moveToPosition(${realIndex})" title="排序">
+                            <i class="fas fa-sort"></i>
+                        </button>
+                        <button class="btn-icon btn-icon-delete" onclick="fileManager.deleteFile(${realIndex})" title="删除">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        html += `
+            <div class="file-list-footer">
                 <label class="select-all-label">
                     <input type="checkbox" id="selectAll" onchange="fileManager.toggleSelectAll()">
                     全选
@@ -230,33 +281,17 @@ class FileManager {
                 <button class="btn-batch-delete" onclick="fileManager.deleteSelected()">
                     <i class="fas fa-trash-alt"></i> 批量删除
                 </button>
+                <div class="pagination">
+                    <button class="btn-page" onclick="fileManager.goToPage(${this.currentPage - 1})" ${this.currentPage === 1 ? 'disabled' : ''}>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="page-info">${this.currentPage} / ${totalPages}</span>
+                    <button class="btn-page" onclick="fileManager.goToPage(${this.currentPage + 1})" ${this.currentPage === totalPages ? 'disabled' : ''}>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
         `;
-        
-        for (let i = 0; i < this.files.length; i++) {
-            const file = this.files[i];
-            const isSelected = this.selectedFiles.has(file.id);
-            html += `
-                <div class="file-item" data-id="${file.id}" data-index="${i}">
-                    <div class="file-checkbox">
-                        <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="fileManager.toggleSelect('${file.id}')">
-                    </div>
-                    <div class="file-order">${i + 1}</div>
-                    <img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" data-index="${i}">
-                    <div class="file-name" title="${file.name}">${file.name}</div>
-                    <div class="file-size">${this.formatSize(file.size)}</div>
-                    <div class="file-date">${file.date}</div>
-                    <div class="file-actions">
-                        <button class="btn-icon" onclick="fileManager.moveToPosition(${i})" title="排序">
-                            <i class="fas fa-sort"></i>
-                        </button>
-                        <button class="btn-icon btn-icon-delete" onclick="fileManager.deleteFile(${i})" title="删除">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
         
         this.fileList.innerHTML = html;
         this.selectAllCheckbox = document.getElementById('selectAll');
