@@ -5,7 +5,7 @@ class FileManager {
         this.uploadZone = document.getElementById('uploadZone');
         this.fileList = document.getElementById('fileList');
         this.previewModal = document.getElementById('previewModal');
-        this.previewImage = document.getElementById('previewImage');
+        this.previewImg = document.getElementById('previewImage');
         
         this.init();
     }
@@ -92,12 +92,12 @@ class FileManager {
         }
         this.fileList.innerHTML = html;
         
-        // 绑定事件
         const self = this;
         this.fileList.querySelectorAll('.file-thumb').forEach(function(img) {
+            img.style.cursor = 'pointer';
             img.addEventListener('click', function() {
                 const idx = parseInt(this.getAttribute('data-index'));
-                self.previewImage(idx);
+                self.showPreview(idx);
             });
         });
         
@@ -123,10 +123,10 @@ class FileManager {
         });
     }
     
-    previewImage(index) {
+    showPreview(index) {
         const file = this.files[index];
         if (file && file.type === 'image') {
-            this.previewImage.src = file.dataUrl;
+            this.previewImg.src = file.dataUrl;
             this.previewModal.classList.add('active');
         }
     }
@@ -187,3 +187,16 @@ class FileManager {
 }
 
 const fileManager = new FileManager();
+
+// 版本号
+function updateVersion() {
+    const now = new Date();
+    const v = 'v1.0.' + 
+        String(now.getFullYear()) + 
+        String(now.getMonth() + 1).padStart(2, '0') + 
+        String(now.getDate()).padStart(2, '0') + 
+        String(now.getHours()).padStart(2, '0') + 
+        String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('versionNum').textContent = v;
+}
+updateVersion();
