@@ -2,6 +2,7 @@ class FileManager {
     constructor() {
         this.files = [];
         this.selectedFiles = new Set();
+        this.searchQuery = '';
         this.pageSize = 5;
         this.filterType = 'all'; // all, image, video
         this.sortField = 'order'; // order, date, size
@@ -529,6 +530,12 @@ class FileManager {
             return f.type === this.filterType;
         });
         
+        // Apply search filter
+        if (this.searchQuery) {
+            const query = this.searchQuery.toLowerCase();
+            displayFiles = displayFiles.filter(f => f.name.toLowerCase().includes(query));
+        }
+        
         // Sort files
         displayFiles.sort((a, b) => {
             let valA, valB;
@@ -584,7 +591,7 @@ class FileManager {
         }
         
         html += '<div class="file-list-footer">';
-        html += '<span class="select-all-label"><input type="checkbox" id="selectAllFooter">全选</span>';
+        
         html += '<button class="btn-batch-download"><i class="fas fa-download"></i> 批量下载</button>';
         html += '<button class="btn-batch-delete"><i class="fas fa-trash-alt"></i> 批量删除</button>';
         html += '<div class="pagination">';
@@ -665,6 +672,13 @@ class FileManager {
         this.previewModal.querySelector('.close-preview').after(img);
     }
     
+    
+    setSearch(query) {
+        this.searchQuery = query;
+        this.currentPage = 1;
+        this.selectedFiles.clear();
+        this.renderFileList();
+    }
     
     setFilter(type) {
         this.filterType = type;
