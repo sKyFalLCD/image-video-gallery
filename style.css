@@ -655,3 +655,18 @@ h1 i {
     width: 18px;
     height: 18px;
 }
+
+/* Left align all header columns except order */
+.file-list-header > span:not(.col-order) {
+    text-align: left;
+}
+
+/* Left align all data columns */
+.file-item > div:not(.file-order) {
+    text-align: left;
+}
+
+/* Center align order column */
+.file-order {
+    text-align: center;
+}
