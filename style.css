@@ -572,3 +572,27 @@ h1 i {
 .col-thumb {
     margin-right: 15px;
 }
+
+/* Filter select dropdown */
+.filter-select {
+    background: #0f3460;
+    border: 1px solid #667eea;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    outline: none;
+}
+.filter-select:hover {
+    border-color: #764ba2;
+}
+.filter-select option {
+    background: #16213e;
+    color: #fff;
+}
+
+/* Better spacing between thumb and name */
+.col-thumb {
+    margin-right: 20px;
+}
