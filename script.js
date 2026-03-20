@@ -43,11 +43,12 @@ class FileManager {
             this.previewModal.addEventListener('click', () => this.closePreview());
             
             // 事件委托
+            // 统一的事件处理
             this.fileList.addEventListener('click', (e) => {
                 const target = e.target;
                 
                 // 全选
-                if (target.id === 'selectAll') {
+                if (target.id === 'selectAll' || target.closest('#selectAllFooter')) {
                     this.toggleSelectAll();
                     return;
                 }
@@ -72,6 +73,13 @@ class FileManager {
                     return;
                 }
                 
+                // 下载按钮
+                if (target.closest('.btn-download')) {
+                    const idx = parseInt(target.closest('.btn-download').dataset.index);
+                    this.downloadFile(idx);
+                    return;
+                }
+                
                 // 缩略图点击
                 if (target.classList.contains('file-thumb') || target.closest('.file-thumb')) {
                     const el = target.classList.contains('file-thumb') ? target : target.closest('.file-thumb');
@@ -79,32 +87,25 @@ class FileManager {
                     this.showPreview(idx);
                     return;
                 }
+                
+                // 上一页下一页
+                if (target.closest('.btn-page-nav')) {
+                    const page = parseInt(target.closest('.btn-page-nav').dataset.page);
+                    if (!isNaN(page)) this.goToPage(page);
+                    return;
+                }
             });
             
-            // 分页输入跳转
             this.fileList.addEventListener('change', (e) => {
                 if (e.target.id === 'pageSizeInput') {
                     this.changePageSize();
+                    return;
                 }
                 if (e.target.id === 'pageInput') {
                     const page = parseInt(e.target.value);
                     if (!isNaN(page)) this.goToPage(page);
                     e.target.value = '';
-                }
-            });
-            
-            // 批量删除
-            this.fileList.addEventListener('click', (e) => {
-                if (e.target.closest('.btn-batch-delete')) {
-                    this.deleteSelected();
-                }
-            });
-            
-            // 上一页下一页
-            this.fileList.addEventListener('click', (e) => {
-                if (e.target.closest('.btn-page-nav')) {
-                    const page = parseInt(e.target.closest('.btn-page-nav').dataset.page);
-                    if (!isNaN(page)) this.goToPage(page);
+                    return;
                 }
             });
             
@@ -114,14 +115,17 @@ class FileManager {
             
             await this.loadFiles();
             
-            // Filter buttons - use document for dynamically added elements
-            // Footer selectAll change handler
-            const selectAllFooter = document.getElementById('selectAllFooter');
-            if (selectAllFooter) {
-                selectAllFooter.addEventListener('change', () => {
-                    this.toggleSelectAll();
-                });
-            }
+            // Sort buttons in header (document-level for delegation)
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.sort-btn')) {
+                    const btn = e.target.closest('.sort-btn');
+                    this.toggleSort(btn.dataset.sort);
+                }
+                if (e.target.closest('.btn-batch-download')) {
+                    this.batchDownload();
+                }
+            });
+            
             
             // Filter dropdown
             const filterSelect = document.getElementById('filterSelect');
