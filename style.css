@@ -96,7 +96,7 @@ h1 i {
 .col-action { width: 80px; flex-shrink: 0; }
 
 .file-list {
-    overflow: visible;
+    overflow-x: auto;
 }
 
 .file-item {
