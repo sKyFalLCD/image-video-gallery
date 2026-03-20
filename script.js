@@ -190,16 +190,4 @@ class FileManager {
 }
 
 const fileManager = new FileManager();
-
-// 版本号
-function updateVersion() {
-    const now = new Date();
-    const v = 'v1.0.' + 
-        String(now.getFullYear()) + 
-        String(now.getMonth() + 1).padStart(2, '0') + 
-        String(now.getDate()).padStart(2, '0') + 
-        String(now.getHours()).padStart(2, '0') + 
-        String(now.getMinutes()).padStart(2, '0');
-    document.getElementById('versionNum').textContent = v;
-}
-updateVersion();
+document.getElementById('versionNum').textContent = 'v1.0.202603201556';
