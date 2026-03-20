@@ -881,8 +881,12 @@ body {
     margin-top: 4px;
 }
 
-/* 隐藏文件输入 */
+/* 隐藏文件输入 - 但保持可点击 */
 #imageInput,
 #videoInput {
-    display: none;
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
