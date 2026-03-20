@@ -81,8 +81,15 @@ h1 i {
 
 .col-check { width: 30px; flex-shrink: 0; }
 .col-order { width: 40px; flex-shrink: 0; text-align: center; }
-.col-thumb { width: 120px; flex-shrink: 0; }
-.col-name { flex: 1; min-width: 0; }
+.col-check { width: 40px; flex-shrink: 0; }
+.col-order { width: 60px; flex-shrink: 0; text-align: center; }
+.col-thumb { width: 80px; flex-shrink: 0; }
+.col-name { flex: 1; min-width: 150px; }
+.col-type { width: 70px; flex-shrink: 0; }
+.col-filter { width: 90px; flex-shrink: 0; }
+.col-size { width: 80px; flex-shrink: 0; }
+.col-date { width: 150px; flex-shrink: 0; }
+.col-action { width: 100px; flex-shrink: 0; }
 .col-type { width: 60px; flex-shrink: 0; text-align: center; }
 .col-size { width: 80px; flex-shrink: 0; }
 .col-date { width: 140px; flex-shrink: 0; }
@@ -697,4 +704,32 @@ h1 i {
 .btn-download:hover {
     color: #22c55e;
     transform: scale(1.1);
+}
+
+/* Prevent overflow */
+.file-list {
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+/* Better text alignment */
+.file-list-header > span {
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+/* Action buttons container */
+.file-action-btns {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+/* Footer layout */
+.file-list-footer {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    padding: 10px;
 }
