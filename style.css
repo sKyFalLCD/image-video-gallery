@@ -506,7 +506,7 @@ body {
     text-align: center;
     cursor: pointer;
     transition: var(--transition);
-    position: relative;
+    display: block;
 }
 
 .upload-box:hover {
@@ -533,13 +533,7 @@ body {
 }
 
 .upload-box input[type="file"] {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
+    display: none;
 }
 
 /* 图片列表管理 */
@@ -881,20 +875,4 @@ body {
     margin-top: 4px;
 }
 
-/* 文件输入样式 */
-#imageInput,
-#videoInput {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-    z-index: 10;
-}
 
-.upload-box {
-    position: relative;
-    cursor: pointer;
-}
