@@ -261,17 +261,17 @@ h1 i {
 }
 
 .file-list::-webkit-scrollbar-track {
-    background: #0f3460;
+    background: #16213e;
     border-radius: 5px;
 }
 
 .file-list::-webkit-scrollbar-thumb {
-    background: #e94560;
+    background: linear-gradient(180deg, #667eea, #764ba2);
     border-radius: 5px;
 }
 
 .file-list::-webkit-scrollbar-thumb:hover {
-    background: #ff6b8a;
+    background: linear-gradient(180deg, #7a8ff0, #8a5cb8);
 }
 
 @media (max-width: 768px) {
