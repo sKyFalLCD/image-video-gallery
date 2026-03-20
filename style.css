@@ -81,8 +81,6 @@ h1 i {
 
 .col-check { width: 30px; flex-shrink: 0; }
 .col-order { width: 40px; flex-shrink: 0; text-align: center; }
-.col-check { width: 40px; flex-shrink: 0; }
-.col-order { width: 60px; flex-shrink: 0; text-align: center; }
 .col-thumb { width: 80px; flex-shrink: 0; }
 .col-name { flex: 1; min-width: 150px; }
 .col-type { width: 70px; flex-shrink: 0; }
@@ -615,7 +613,6 @@ h1 i {
 }
 
 /* Select all checkbox in header */
-.col-check {
     display: flex;
     align-items: center;
 }
@@ -652,7 +649,6 @@ h1 i {
 }
 
 /* Increase order column width */
-.col-order {
     width: 80px;
     flex-shrink: 0;
 }
