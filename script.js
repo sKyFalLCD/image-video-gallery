@@ -64,7 +64,7 @@ class FileManager {
                 
                 // 删除按钮
                 if (target.closest('.btn-delete')) {
-                    const idx = parseInt(target.closest('.btn-delete').dataset.index));
+                    const idx = parseInt(target.closest('.btn-delete').dataset.index);
                     this.deleteFile(idx);
                     return;
                 }
