@@ -129,10 +129,17 @@ class FileManager {
             
             // Search button
             var searchBtn = document.getElementById('searchBtn');
+            var searchInput = document.getElementById('searchInput');
             if (searchBtn) {
                 searchBtn.addEventListener('click', () => {
-                    var input = document.getElementById('searchInput');
-                    if (input) self.setSearch(input.value);
+                    if (searchInput) self.setSearch(searchInput.value);
+                });
+            }
+            if (searchInput) {
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        self.setSearch(searchInput.value);
+                    }
                 });
             }
             
