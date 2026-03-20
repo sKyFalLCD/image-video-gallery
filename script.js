@@ -556,6 +556,7 @@ class FileManager {
             html += '<div class="file-size">' + this.formatSize(file.size) + '</div>';
             html += '<div class="file-date">' + file.date + '</div>';
             html += '<div class="file-action-btns">';
+            html += '<button class="btn-icon btn-download" data-index="' + realIndex + '" title="下载"><i class="fas fa-download"></i></button>';
             html += '<button class="btn-icon btn-move" data-index="' + realIndex + '" title="排序"><i class="fas fa-sort"></i></button>';
             html += '<button class="btn-icon btn-delete" data-index="' + realIndex + '" title="删除"><i class="fas fa-trash-alt"></i></button>';
             html += '</div></div>';
@@ -563,6 +564,7 @@ class FileManager {
         
         html += '<div class="file-list-footer">';
         html += '<label class="select-all-label"><input type="checkbox" id="selectAllFooter">全选</label>';
+        html += '<button class="btn-batch-download"><i class="fas fa-download"></i> 批量下载</button>';
         html += '<button class="btn-batch-delete"><i class="fas fa-trash-alt"></i> 批量删除</button>';
         html += '<div class="pagination">';
         html += '<span class="page-label">每页</span><input type="number" id="pageSizeInput" value="' + this.pageSize + '" min="1" max="10"><span class="page-label">个</span>';
@@ -690,6 +692,36 @@ class FileManager {
             var pageFiles = this.getCurrentPageFiles();
             selectAll.checked = pageFiles.length > 0 && pageFiles.every(function(f) { return this.selectedFiles.has(String(f.id)); }, this);
         }
+    }
+    
+    downloadFile(index) {
+        const file = this.files[index];
+        if (!file) return;
+        const link = document.createElement('a');
+        link.href = file.dataUrl;
+        link.download = file.originalName || file.name;
+        link.click();
+    }
+    
+    batchDownload() {
+        if (this.selectedFiles.size === 0) {
+            alert('请先勾选要下载的文件');
+            return;
+        }
+        const selectedFilesList = this.files.filter(f => this.selectedFiles.has(String(f.id)));
+        if (selectedFilesList.length === 0) {
+            alert('没有选中的文件');
+            return;
+        }
+        // For multiple files, download each one
+        selectedFilesList.forEach((file, i) => {
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = file.dataUrl;
+                link.download = file.originalName || file.name;
+                link.click();
+            }, i * 500); // Delay to avoid browser blocking
+        });
     }
     
     formatSize(bytes) {
