@@ -4,7 +4,7 @@ class FileManager {
         this.selectedFiles = new Set();
         this.pageSize = 5;
         this.filterType = 'all'; // all, image, video
-        this.sortField = 'date'; // date, size
+        this.sortField = 'order'; // order, date, size
         this.sortOrder = 'desc'; // asc, desc
         this.currentPage = 1;
         this.fileInput = document.getElementById('fileInput');
@@ -113,6 +113,23 @@ class FileManager {
             });
             
             await this.loadFiles();
+            
+            // Filter buttons - use document for dynamically added elements
+            // Filter dropdown
+            const filterSelect = document.getElementById('filterSelect');
+            if (filterSelect) {
+                filterSelect.addEventListener('change', (e) => {
+                    this.setFilter(e.target.value);
+                });
+            }
+            
+            // Sort buttons - use document delegation
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.sort-btn')) {
+                    const btn = e.target.closest('.sort-btn');
+                    this.toggleSort(btn.dataset.sort);
+                }
+            });
             
             const ver = document.getElementById('versionNum');
             if (ver) ver.textContent = ver.getAttribute('data-version') || '';
@@ -489,6 +506,9 @@ class FileManager {
             if (this.sortField === 'size') {
                 valA = a.size;
                 valB = b.size;
+            } else if (this.sortField === 'order') {
+                valA = this.files.indexOf(a);
+                valB = this.files.indexOf(b);
             } else {
                 valA = new Date(a.date || 0);
                 valB = new Date(b.date || 0);
