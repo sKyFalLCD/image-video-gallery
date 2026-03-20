@@ -4,6 +4,8 @@ class FileManager {
         this.fileInput = document.getElementById('fileInput');
         this.uploadZone = document.getElementById('uploadZone');
         this.fileList = document.getElementById('fileList');
+        this.previewModal = document.getElementById('previewModal');
+        this.previewImage = document.getElementById('previewImage');
         
         this.init();
     }
@@ -27,6 +29,9 @@ class FileManager {
             this.uploadZone.classList.remove('dragover');
             this.handleFiles(e.dataTransfer.files);
         });
+        
+        // 预览关闭
+        this.previewModal.addEventListener('click', () => this.closePreview());
         
         // 加载已保存的文件
         this.loadFiles();
@@ -70,11 +75,9 @@ class FileManager {
         
         this.fileList.innerHTML = this.files.map((file, index) => `
             <div class="file-item" data-id="${file.id}">
-                <img class="file-thumb" src="${file.dataUrl}" alt="${file.name}">
+                <img class="file-thumb" src="${file.dataUrl}" alt="${file.name}" onclick="fileManager.previewImage('${file.dataUrl}')">
                 <div class="file-name" title="${file.name}">${file.name}</div>
-                <div class="file-type">${file.type}</div>
                 <div class="file-size">${this.formatSize(file.size)}</div>
-                <div class="file-date">${file.date}</div>
                 <div class="file-actions">
                     <button class="btn-up" onclick="fileManager.moveUp(${index})" ${index === 0 ? 'disabled' : ''}>↑</button>
                     <button class="btn-down" onclick="fileManager.moveDown(${index})" ${index === this.files.length - 1 ? 'disabled' : ''}>↓</button>
@@ -82,6 +85,15 @@ class FileManager {
                 </div>
             </div>
         `).join('');
+    }
+    
+    previewImage(dataUrl) {
+        this.previewImage.src = dataUrl;
+        this.previewModal.classList.add('active');
+    }
+    
+    closePreview() {
+        this.previewModal.classList.remove('active');
     }
     
     moveUp(index) {
