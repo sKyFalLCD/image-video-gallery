@@ -277,16 +277,11 @@ class ImageManager {
         // 显示上传中状态
         this.showUploadProgress(file.name, file.size, 'image');
         
+        // 每个文件创建新的 FileReader
         const reader = new FileReader();
+        const self = this;
         
-        reader.onprogress = (e) => {
-            if (e.lengthComputable) {
-                const progress = Math.round((e.loaded / e.total) * 100);
-                this.updateUploadProgress(file.name, progress);
-            }
-        };
-        
-        reader.onload = (e) => {
+        reader.onload = function(e) {
             const imageData = {
                 id: Date.now() + Math.random(),
                 name: file.name,
@@ -295,21 +290,26 @@ class ImageManager {
                 dataUrl: e.target.result
             };
             
-            this.uploadedImages.push(imageData);
-            this.renderImageList();
+            self.uploadedImages.push(imageData);
+            self.renderImageList();
             
             // 移除进度显示
-            this.hideUploadProgress(file.name);
+            self.hideUploadProgress(file.name);
             
             // 显示成功消息
-            this.showUploadSuccess(file.name);
+            self.showUploadSuccess(file.name);
         };
         
-        reader.onerror = () => {
-            this.hideUploadProgress(file.name);
-            this.showUploadError(file.name);
+        reader.onerror = function() {
+            self.hideUploadProgress(file.name);
+            self.showUploadError(file.name);
         };
         
+        reader.onloadstart = function() {
+            self.updateUploadProgress(file.name, 10);
+        };
+        
+        // 使用闭包避免问题
         reader.readAsDataURL(file);
     }
     
@@ -317,16 +317,11 @@ class ImageManager {
         // 显示上传中状态
         this.showUploadProgress(file.name, file.size, 'video');
         
+        // 每个文件创建新的 FileReader
         const reader = new FileReader();
+        const self = this;
         
-        reader.onprogress = (e) => {
-            if (e.lengthComputable) {
-                const progress = Math.round((e.loaded / e.total) * 100);
-                this.updateUploadProgress(file.name, progress);
-            }
-        };
-        
-        reader.onload = (e) => {
+        reader.onload = function(e) {
             const videoData = {
                 id: Date.now() + Math.random(),
                 name: file.name,
@@ -336,19 +331,23 @@ class ImageManager {
                 type: 'local'
             };
             
-            this.uploadedVideos.push(videoData);
-            this.renderVideoList();
+            self.uploadedVideos.push(videoData);
+            self.renderVideoList();
             
             // 移除进度显示
-            this.hideUploadProgress(file.name);
+            self.hideUploadProgress(file.name);
             
             // 显示成功消息
-            this.showUploadSuccess(file.name);
+            self.showUploadSuccess(file.name);
         };
         
-        reader.onerror = () => {
-            this.hideUploadProgress(file.name);
-            this.showUploadError(file.name);
+        reader.onerror = function() {
+            self.hideUploadProgress(file.name);
+            self.showUploadError(file.name);
+        };
+        
+        reader.onloadstart = function() {
+            self.updateUploadProgress(file.name, 10);
         };
         
         reader.readAsDataURL(file);
