@@ -587,7 +587,7 @@ class FileManager {
             img.style.display = 'none';
             const videoEl = document.createElement('video');
             videoEl.src = file.dataUrl;
-            videoEl.controls = true;
+            videoEl.controls = true; videoEl.autoplay = true;
             videoEl.style.cssText = 'max-width:70%;max-height:70%;border-radius:12px;';
             img.replaceWith(videoEl);
             modal.classList.add('active');
@@ -598,7 +598,7 @@ class FileManager {
         this.previewModal.classList.remove('active');
         const videoEl = this.previewModal.querySelector('video');
         if (videoEl) {
-            videoEl.pause();
+            videoEl.pause(); videoEl.currentTime = 0;
             videoEl.remove();
         }
         const img = document.createElement('img');
