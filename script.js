@@ -451,12 +451,18 @@ class FileManager {
     }
     
     toggleSelectAll() {
-        const checkbox = document.getElementById('selectAll');
-        if (checkbox && checkbox.checked) {
-            this.getCurrentPageFiles().forEach(f => this.selectedFiles.add(String(f.id)));
+        const headerCheckbox = document.getElementById('selectAll');
+        const footerCheckbox = document.getElementById('selectAllFooter');
+        const isChecked = headerCheckbox ? headerCheckbox.checked : (footerCheckbox ? footerCheckbox.checked : false);
+        const pageFiles = this.getCurrentPageFiles();
+        if (isChecked) {
+            pageFiles.forEach(f => this.selectedFiles.add(String(f.id)));
         } else {
-            this.getCurrentPageFiles().forEach(f => this.selectedFiles.delete(String(f.id)));
+            this.selectedFiles.clear();
         }
+        // Sync both checkboxes
+        if (headerCheckbox) headerCheckbox.checked = isChecked;
+        if (footerCheckbox) footerCheckbox.checked = isChecked;
         this.renderFileList();
     }
     
@@ -702,11 +708,12 @@ class FileManager {
             }
         });
         // Update header selectAll state
-        var selectAll = document.getElementById("selectAll");
-        if (selectAll) {
-            var pageFiles = this.getCurrentPageFiles();
-            selectAll.checked = pageFiles.length > 0 && pageFiles.every(function(f) { return this.selectedFiles.has(String(f.id)); }, this);
-        }
+        var headerCheckbox = document.getElementById("selectAll");
+        var footerCheckbox = document.getElementById("selectAllFooter");
+        var pageFiles = this.getCurrentPageFiles();
+        var allSelected = pageFiles.length > 0 && pageFiles.every(function(f) { return this.selectedFiles.has(String(f.id)); }, this);
+        if (headerCheckbox) headerCheckbox.checked = allSelected;
+        if (footerCheckbox) footerCheckbox.checked = allSelected;
     }
     
     downloadFile(index) {
