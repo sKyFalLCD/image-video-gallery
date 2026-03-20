@@ -22,8 +22,13 @@
                 <span class="col-thumb">缩略图</span>
                 <span class="col-name">文件名</span>
                 <span class="col-type">类型</span>
-                <span class="col-size">大小</span>
-                <span class="col-date">上传时间</span>
+                <span class="col-filter">
+        <button class="filter-btn active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="image">图</button>
+        <button class="filter-btn" data-filter="video">视频</button>
+    </span>
+                <span class="col-size"><button class="sort-btn" data-sort="size" title="按大小排序"><i class="fas fa-sort"></i>大小</button></span>
+                <span class="col-date"><button class="sort-btn active" data-sort="date" title="按时间排序"><i class="fas fa-sort-down"></i>时间</button></span>
                 <span class="col-action">操作</span>
             </div>
             <div class="file-list" id="fileList">
@@ -56,7 +61,7 @@
     </div>
 
     <footer class="version-footer">
-        <span id="versionNum" data-version="v1.0.0013"></span>
+        <span id="versionNum" data-version="v1.0.0014"></span>
     </footer>
 
     <script src="script.js"></script>
