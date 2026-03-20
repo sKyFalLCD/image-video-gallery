@@ -121,7 +121,7 @@ class FileManager {
             // Footer selectAll change event
             const self = this;
             document.addEventListener('change', function(e) {
-                if (e.target.id === 'selectAllFooter') {
+                if (e.target.id === 'selectAllFooter' || e.target.closest('#selectAllFooter')) {
                     self.toggleSelectAll();
                 }
             });
@@ -584,7 +584,7 @@ class FileManager {
         }
         
         html += '<div class="file-list-footer">';
-        html += '<label class="select-all-label"><input type="checkbox" id="selectAllFooter">全选</label>';
+        html += '<span class="select-all-label"><input type="checkbox" id="selectAllFooter">全选</span>';
         html += '<button class="btn-batch-download"><i class="fas fa-download"></i> 批量下载</button>';
         html += '<button class="btn-batch-delete"><i class="fas fa-trash-alt"></i> 批量删除</button>';
         html += '<div class="pagination">';
