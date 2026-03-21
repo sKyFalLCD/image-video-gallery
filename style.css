@@ -748,16 +748,7 @@ h1 i {
 }
 
 /* Search input */
-.search-input {
-    background: #0f3460;
-    border: 1px solid #667eea;
-    color: #fff;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    width: 180px;
-    outline: none;
-}
+
 .search-input::placeholder {
     color: #a0a0a0;
 }
@@ -801,15 +792,7 @@ h1 i {
 }
 
 /* Search button */
-.search-btn {
-    background: #0f3460;
-    border: 1px solid #667eea;
-    color: #fff;
-    padding: 6px 12px;
-    border-radius: 0 6px 6px 0;
-    cursor: pointer;
-    margin-left: -1px;
-}
+
 .search-btn:hover {
     background: #1a1a2e;
 }
