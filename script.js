@@ -606,7 +606,7 @@ class FileManager {
             html += '<button class="btn-icon btn-download" data-index="' + realIndex + '" title="下载"><i class="fas fa-download"></i></button>';
             html += '<button class="btn-icon btn-move" data-index="' + realIndex + '" title="调整顺序"><i class="fas fa-arrows-alt-v"></i></button>';
             html += '<button class="btn-icon btn-delete" data-index="' + realIndex + '" title="删除"><i class="fas fa-trash-alt"></i></button>';
-            html += '</div></div>';
+            html += '</div></div></div>';
         }
         
         html += '<div class="file-list-footer">';
@@ -615,6 +615,7 @@ class FileManager {
         html += '<button class="btn-batch-download"><i class="fas fa-download"></i> 批量下载</button>';
         html += '<button class="btn-batch-delete"><i class="fas fa-trash-alt"></i> 批量删除</button>';
         html += '</div>';
+        html += '<div class="footer-center">';
         html += '<span class="footer-file-count" id="footerFileCount"></span>';
         html += '<div class="pagination">';
         html += '<span class="page-label">每页</span><input type="number" id="pageSizeInput" value="' + this.pageSize + '" min="1" max="10"><span class="page-label">个</span>';
@@ -622,7 +623,7 @@ class FileManager {
         html += '<span class="page-info">' + this.currentPage + ' / ' + totalPages + '</span>';
         html += '<button class="btn-page btn-page-nav" data-page="' + (this.currentPage + 1) + '" ' + (this.currentPage === totalPages ? 'disabled' : '') + '><i class="fas fa-chevron-right"></i></button>';
         html += '<input type="number" id="pageInput" placeholder="跳转" min="1"><button class="btn-page" id="jumpBtn">跳转</button>';
-        html += '</div></div>';
+        html += '</div></div></div>';
         
         this.fileList.innerHTML = html;
         

@@ -76,7 +76,7 @@ h1 i {
     font-weight: 600;
     font-size: 0.85rem;
     color: #a0a0a0;
-    gap: 10px;
+    gap: 15px;
 }
 
 
@@ -90,7 +90,7 @@ h1 i {
     align-items: center;
     border-bottom: 1px solid #0f3460;
     transition: background 0.2s;
-    gap: 10px;
+    gap: 15px;
 }
 
 .file-item:hover {
@@ -101,9 +101,9 @@ h1 i {
 .col-thumb { width: 80px; flex-shrink: 0; }
 .col-name { flex: 1; min-width: 200px; }
 .col-filter { width: 85px; flex-shrink: 0; }
-.col-size { width: 90px; flex-shrink: 0; }
-.col-date { width: 140px; flex-shrink: 0; }
-.col-action { width: 100px; flex-shrink: 0; }
+.col-size { width: 90px; flex-shrink: 0; text-align: right; }
+.col-date { width: 140px; flex-shrink: 0; text-align: right; }
+.col-action { width: 100px; flex-shrink: 0; text-align: center; }
 
     background: #1a1a2e;
 }
@@ -772,15 +772,19 @@ h1 i {
 }
 
 .footer-file-count {
-    color: #a0a0a0;
+    color: #ffffff;
     font-size: 0.9rem;
-    flex: 1;
-    text-align: center;
 }
 
 /* File list footer layout */
 .file-list-footer {
-    justify-content: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.footer-center {
+    display: flex;
+    align-items: center;
     gap: 20px;
 }
 
