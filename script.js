@@ -143,6 +143,32 @@ class FileManager {
                 });
             }
             
+            // Pagination buttons
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            const jumpBtn = document.getElementById('jumpBtn');
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    if (self.currentPage > 1) self.goToPage(self.currentPage - 1);
+                });
+            }
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    const totalPages = Math.ceil(self.files.length / self.pageSize) || 1;
+                    if (self.currentPage < totalPages) self.goToPage(self.currentPage + 1);
+                });
+            }
+            if (jumpBtn) {
+                jumpBtn.addEventListener('click', () => {
+                    const pageInput = document.getElementById('pageInput');
+                    if (pageInput) {
+                        const page = parseInt(pageInput.value);
+                        if (!isNaN(page)) self.goToPage(page);
+                        pageInput.value = '';
+                    }
+                });
+            }
+            
             // Sort buttons in header (document-level for delegation)
             document.addEventListener('click', (e) => {
                 if (e.target.closest('.sort-btn')) {
@@ -606,32 +632,33 @@ class FileManager {
             html += '<button class="btn-icon btn-download" data-index="' + realIndex + '" title="下载"><i class="fas fa-download"></i></button>';
             html += '<button class="btn-icon btn-move" data-index="' + realIndex + '" title="调整顺序"><i class="fas fa-arrows-alt-v"></i></button>';
             html += '<button class="btn-icon btn-delete" data-index="' + realIndex + '" title="删除"><i class="fas fa-trash-alt"></i></button>';
-            html += '</div></div></div>';
+            html += '</div></div>';
         }
-        
-        html += '<div class="file-list-footer">';
-        
-        html += '<div class="footer-actions">';
-        html += '<button class="btn-batch-download"><i class="fas fa-download"></i> 批量下载</button>';
-        html += '<button class="btn-batch-delete"><i class="fas fa-trash-alt"></i> 批量删除</button>';
-        html += '</div>';
-        html += '<div class="footer-center">';
-        html += '<span class="footer-file-count" id="footerFileCount"></span>';
-        html += '<div class="pagination">';
-        html += '<span class="page-label">每页</span><input type="number" id="pageSizeInput" value="' + this.pageSize + '" min="1" max="10"><span class="page-label">个</span>';
-        html += '<button class="btn-page btn-page-nav" data-page="' + (this.currentPage - 1) + '" ' + (this.currentPage === 1 ? 'disabled' : '') + '><i class="fas fa-chevron-left"></i></button>';
-        html += '<span class="page-info">' + this.currentPage + ' / ' + totalPages + '</span>';
-        html += '<button class="btn-page btn-page-nav" data-page="' + (this.currentPage + 1) + '" ' + (this.currentPage === totalPages ? 'disabled' : '') + '><i class="fas fa-chevron-right"></i></button>';
-        html += '<input type="number" id="pageInput" placeholder="跳转" min="1"><button class="btn-page" id="jumpBtn">跳转</button>';
-        html += '</div></div></div>';
         
         this.fileList.innerHTML = html;
         
+        // Update static footer elements
         const headerCheckbox = document.getElementById('selectAll');
         const footerCheckbox = document.getElementById('selectAllFooter');
         const allSelected = pageFiles.length > 0 && pageFiles.every(f => this.selectedFiles.has(String(f.id)));
         if (headerCheckbox) headerCheckbox.checked = allSelected;
         if (footerCheckbox) footerCheckbox.checked = allSelected;
+        
+        // Update footer file count
+        const footerCount = document.getElementById('footerFileCount');
+        if (footerCount) footerCount.textContent = '共 ' + displayFiles.length + ' 个文件';
+        
+        // Update pagination
+        const pageInfo = document.getElementById('pageInfo');
+        if (pageInfo) pageInfo.textContent = this.currentPage + ' / ' + totalPages;
+        
+        const prevBtn = document.getElementById('prevPage');
+        const nextBtn = document.getElementById('nextPage');
+        if (prevBtn) prevBtn.disabled = this.currentPage <= 1;
+        if (nextBtn) nextBtn.disabled = this.currentPage >= totalPages;
+        
+        const pageSizeInput = document.getElementById('pageSizeInput');
+        if (pageSizeInput) pageSizeInput.value = this.pageSize;
     }
     
     async moveToPosition(fromIndex) {

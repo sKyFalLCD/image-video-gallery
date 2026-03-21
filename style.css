@@ -1,125 +1,209 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* =============================================
+   基础变量
+   ============================================= */
+:root {
+    --bg-primary: #0a0a1a;
+    --bg-secondary: #0f1a2e;
+    --bg-card: #111827;
+    --bg-hover: #1a2535;
+    --accent: #667eea;
+    --accent-light: #8b9ff5;
+    --accent-dark: #4c5fd4;
+    --border: #1e3a5f;
+    --text-primary: #e8edf5;
+    --text-secondary: #8b9bb4;
+    --text-muted: #5a6a85;
+    --danger: #e94560;
+    --success: #38b79a;
+    --radius: 10px;
+    --shadow: 0 4px 20px rgba(0,0,0,0.4);
 }
 
+/* =============================================
+   基础重置
+   ============================================= */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #1a1a2e;
-    color: #eee;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
     min-height: 100vh;
-    padding: 20px;
+    line-height: 1.6;
 }
 
 .container {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 30px 20px;
 }
 
 h1 {
     text-align: center;
-    padding: 20px 0 30px;
-    color: #fff;
-    font-size: 2rem;
-}
-
-h1 i {
-    color: #e94560;
-    margin-right: 10px;
+    margin-bottom: 30px;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
 }
 
 .site-logo {
-    height: 50px;
-    vertical-align: middle;
-    margin-right: 10px;
+    height: 36px;
+    border-radius: 8px;
 }
 
 .section {
-    background: #16213e;
-    border-radius: 16px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
     overflow: hidden;
+}
+
+/* =============================================
+   搜索区域
+   ============================================= */
+.search-section {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
     margin-bottom: 20px;
 }
 
-.section-header {
+.search-box {
     display: flex;
     align-items: center;
-    padding: 20px 25px;
-    background: #0f3460;
-    gap: 15px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.section-header h2 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.search-box:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
 }
 
-.section-header h2 i {
-    color: #e94560;
-}
-
-.file-count {
-    margin-left: auto;
+.search-icon {
+    padding: 0 12px;
+    color: var(--text-muted);
     font-size: 0.9rem;
-    font-weight: 400;
-    color: #a0a0a0;
 }
 
+.search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    padding: 12px 0;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-btn {
+    background: var(--accent);
+    border: none;
+    color: #fff;
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.search-btn:hover {
+    background: var(--accent-light);
+}
+
+/* =============================================
+   文件列表区域
+   ============================================= */
+.file-section {
+    padding: 0;
+}
+
+/* 列表标题行 */
 .file-list-header {
     display: flex;
-    padding: 12px 25px;
-    background: #0f3460;
+    align-items: center;
+    padding: 12px 20px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
     font-weight: 600;
-    font-size: 0.85rem;
-    color: #a0a0a0;
-    gap: 15px;
+    color: var(--text-muted);
+    gap: 8px;
 }
 
+.file-list-header > span {
+    padding: 0 4px;
+}
 
+/* 各列宽度 */
+.col-check   { width: 36px; flex-shrink: 0; }
+.col-order  { width: 50px; flex-shrink: 0; text-align: center; }
+.col-thumb  { width: 72px; flex-shrink: 0; }
+.col-name   { flex: 1; min-width: 0; }
+.col-type   { width: 64px; flex-shrink: 0; text-align: center; }
+.col-size   { width: 80px; flex-shrink: 0; text-align: right; }
+.col-date   { width: 130px; flex-shrink: 0; text-align: right; }
+.col-action { width: 110px; flex-shrink: 0; text-align: center; }
+
+.col-check input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
+/* 文件数据行 */
 .file-list {
-    overflow-x: visible;
+    min-height: 100px;
 }
 
 .file-item {
     display: flex;
-    padding: 10px 25px;
     align-items: center;
-    border-bottom: 1px solid #0f3460;
-    transition: background 0.2s;
-    gap: 15px;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 8px;
+    transition: background 0.15s;
 }
 
 .file-item:hover {
-
-/* Column widths */
-.col-check { width: 40px; flex-shrink: 0; }
-.col-order { width: 55px; flex-shrink: 0; text-align: center; }
-.col-thumb { width: 80px; flex-shrink: 0; }
-.col-name { flex: 1; min-width: 200px; }
-.col-filter { width: 85px; flex-shrink: 0; }
-.col-size { width: 90px; flex-shrink: 0; text-align: right; }
-.col-date { width: 140px; flex-shrink: 0; text-align: right; }
-.col-action { width: 100px; flex-shrink: 0; text-align: center; }
-
-    background: #1a1a2e;
+    background: var(--bg-hover);
 }
 
+.file-item > div {
+    padding: 0 4px;
+}
+
+/* 序号 */
 .file-order {
-    width: 55px;
+    width: 50px;
     flex-shrink: 0;
     text-align: center;
     font-weight: 600;
-    color: #667eea;
-    font-size: 1rem;
+    color: var(--accent);
+    font-size: 0.9rem;
 }
 
+/* 缩略图 */
 .file-thumb {
-    width: 80px;
-    height: 75px;
+    width: 72px;
+    height: 48px;
     object-fit: cover;
     border-radius: 6px;
     cursor: pointer;
@@ -128,12 +212,13 @@ h1 i {
 }
 
 .file-thumb:hover {
-    transform: scale(1.03);
+    transform: scale(1.05);
 }
 
 .video-thumb {
     position: relative;
     background: #000;
+    overflow: hidden;
 }
 
 .video-thumb video {
@@ -145,300 +230,334 @@ h1 i {
 
 .play-overlay {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: rgba(255,255,255,0.8);
-    font-size: 1.5rem;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.35);
+    color: #fff;
+    font-size: 0.8rem;
+    border-radius: 6px;
 }
 
+/* 文件名 */
 .file-name {
     flex: 1;
     min-width: 0;
-    font-weight: 500;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-size: 0.9rem;
+    color: var(--text-primary);
 }
 
+/* 文件类型标签 */
 .file-type {
-    width: 85px;
+    width: 64px;
     flex-shrink: 0;
     text-align: center;
-    font-size: 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 2px 0;
+    border-radius: 4px;
 }
 
 .type-image {
-    color: #667eea;
+    color: var(--accent);
+    background: rgba(102, 126, 234, 0.12);
 }
 
 .type-video {
-    color: #e94560;
+    color: var(--danger);
+    background: rgba(233, 69, 96, 0.12);
 }
 
+/* 文件大小 */
 .file-size {
-    width: 90px;
+    width: 80px;
     flex-shrink: 0;
-    color: #a0a0a0;
-    font-size: 0.85rem;
+    text-align: right;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
 }
 
+/* 文件日期 */
 .file-date {
-    width: 140px;
+    width: 130px;
     flex-shrink: 0;
-    color: #a0a0a0;
-    font-size: 0.85rem;
+    text-align: right;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
 }
 
-.file-checkbox {
-    width: 40px;
+/* 操作按钮组 */
+.file-action-btns {
+    width: 110px;
     flex-shrink: 0;
-}
-
-.file-checkbox input {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-}
-
-/* 文件列表底部 */
-.file-list-footer {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 15px 25px;
-    background: #0f3460;
-    border-top: 1px solid #16213e;
-    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
 }
 
-.select-all-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    color: #a0a0a0;
-    font-size: 0.9rem;
-}
-
-.select-all-label input {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-}
-
-.btn-batch-delete {
-    padding: 8px 16px;
-    background: rgba(233, 69, 96, 0.2);
-    border: none;
-    border-radius: 6px;
-    color: #e94560;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-batch-delete:hover {
-    background: #e94560;
-    color: white;
-}
-
-.btn-batch-delete i {
-    margin-right: 6px;
-}
-
-/* 分页 */
-.pagination {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.page-label {
-    color: #a0a0a0;
-    font-size: 0.9rem;
-}
-
-.pagination input[type="number"] {
-    width: 50px;
-    padding: 6px 8px;
-    border: 1px solid #0f3460;
-    border-radius: 6px;
-    background: #16213e;
-    color: #fff;
-    font-size: 0.9rem;
-    text-align: center;
-}
-
-.pagination input[type="number"]::-webkit-inner-spin-button,
-.pagination input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-.pagination input[type="number"] {
-    -moz-appearance: textfield;
-}
-
-#pageInput {
-    width: 50px !important;
-}
-
-.btn-page {
-    padding: 8px 12px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border: none;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.9rem;
-}
-
-.btn-page:hover:not(:disabled) {
-    background: linear-gradient(135deg, #7a8ff0, #8a5cb8);
-}
-
-.btn-page:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.page-info {
-    color: #a0a0a0;
-    font-size: 0.9rem;
-    min-width: 60px;
-    text-align: center;
-}
-
-/* 图标按钮 */
 .btn-icon {
-    padding: 6px 10px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border: none;
+    padding: 5px 8px;
+    background: transparent;
+    border: 1px solid var(--border);
     border-radius: 6px;
-    color: white;
+    color: var(--text-secondary);
     cursor: pointer;
+    font-size: 0.75rem;
     transition: all 0.2s;
-    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-icon:hover {
-    background: linear-gradient(135deg, #7a8ff0, #8a5cb8);
-    transform: scale(1.05);
-}
-
-.btn-icon-delete {
-    background: rgba(233, 69, 96, 0.2);
-    color: #e94560;
-}
-
-.btn-icon-delete:hover {
-    background: #e94560;
-    color: white;
-}
-
-.file-action-btns {
-    width: 100px;
-    flex-shrink: 0;
-    display: flex;
-    gap: 5px;
-}
-
-.empty-list {
-    text-align: center;
-    padding: 60px;
-    color: #a0a0a0;
-}
-
-.upload-section {
-    background: #16213e;
-    border-radius: 16px;
-}
-
-.upload-zone {
-    padding: 60px 20px;
-    border: 3px dashed #0f3460;
-    border-radius: 16px;
-    margin: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-}
-
-.upload-zone:hover {
-    border-color: #667eea;
+    border-color: var(--accent);
+    color: var(--accent);
     background: rgba(102, 126, 234, 0.1);
 }
 
+.btn-icon-delete:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: rgba(233, 69, 96, 0.1);
+}
+
+/* 空状态 */
+.empty-list {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* =============================================
+   文件列表底部（分页 + 统计 + 操作）
+   ============================================= */
+.file-list-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.footer-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.footer-actions .btn-batch-download,
+.footer-actions .btn-batch-delete {
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.82rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.footer-actions .btn-batch-download:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.footer-actions .btn-batch-delete:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: rgba(233, 69, 96, 0.1);
+}
+
+.footer-center {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.footer-file-count {
+    color: #ffffff;
+    font-size: 0.88rem;
+    white-space: nowrap;
+}
+
+/* 分页控件 */
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.page-label {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.page-size-input,
+.page-jump-input {
+    width: 48px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text-primary);
+    padding: 4px 6px;
+    font-size: 0.82rem;
+    text-align: center;
+    outline: none;
+}
+
+.page-size-input:focus,
+.page-jump-input:focus {
+    border-color: var(--accent);
+}
+
+.page-jump-input {
+    width: 52px;
+}
+
+.page-info {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    padding: 0 6px;
+    white-space: nowrap;
+}
+
+.btn-page {
+    padding: 5px 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.btn-page:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.btn-page:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* 全选标签 */
+.select-all-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    white-space: nowrap;
+}
+
+.select-all-label input {
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
+/* =============================================
+   上传区域
+   ============================================= */
+.upload-section h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.upload-zone {
+    margin: 16px 20px;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    color: var(--text-muted);
+    position: relative;
+}
+
+.upload-zone:hover,
 .upload-zone.dragover {
-    border-color: #667eea;
-    background: rgba(102, 126, 234, 0.2);
+    border-color: var(--accent);
+    background: rgba(102, 126, 234, 0.05);
 }
 
 .upload-zone i {
-    font-size: 4rem;
-    color: #667eea;
-    margin-bottom: 15px;
+    font-size: 2rem;
+    margin-bottom: 8px;
+    color: var(--text-muted);
 }
 
 .upload-zone p {
-    color: #a0a0a0;
-    font-size: 1.1rem;
+    font-size: 0.88rem;
 }
 
-.upload-zone input {
+.upload-zone input[type="file"] {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     opacity: 0;
     cursor: pointer;
 }
 
 .storage-bar {
-    margin: 0 20px 20px;
-    padding: 15px 20px;
-    background: #0f3460;
-    border-radius: 12px;
+    margin: 0 20px 16px;
 }
 
 .storage-bar-label {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
-    font-size: 0.9rem;
-    color: #a0a0a0;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
 }
 
 .storage-bar-track {
-    height: 8px;
-    background: #16213e;
-    border-radius: 4px;
+    height: 5px;
+    background: var(--bg-secondary);
+    border-radius: 3px;
     overflow: hidden;
 }
 
 .storage-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #667eea, #764ba2);
-    border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent), #764ba2);
+    border-radius: 3px;
     transition: width 0.3s;
 }
 
+/* =============================================
+   预览弹窗
+   ============================================= */
 .preview-modal {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(26, 26, 46, 0.95);
+    inset: 0;
+    background: rgba(0,0,0,0.85);
     z-index: 1000;
     align-items: center;
     justify-content: center;
@@ -450,369 +569,61 @@ h1 i {
 }
 
 .preview-image {
-    max-width: 70%;
-    max-height: 70%;
+    max-width: 90vw;
+    max-height: 90vh;
     object-fit: contain;
-    border-radius: 12px;
-    box-shadow: 0 0 40px rgba(102, 126, 234, 0.3);
+    border-radius: 8px;
 }
 
 .close-preview {
     position: absolute;
-    top: 30px;
-    right: 30px;
-    font-size: 3rem;
+    top: 16px;
+    right: 24px;
+    font-size: 2rem;
     color: #fff;
     cursor: pointer;
-    transition: color 0.2s;
+    opacity: 0.8;
 }
 
 .close-preview:hover {
-    color: #667eea;
+    opacity: 1;
 }
 
+/* =============================================
+   底部版本信息
+   ============================================= */
 .version-footer {
     text-align: center;
-    padding: 15px;
-    color: #666;
-    font-size: 0.85rem;
+    padding: 20px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
 }
 
+/* =============================================
+   响应式
+   ============================================= */
 @media (max-width: 768px) {
-    .file-list-header {
-        display: none;
-    }
+    .container { padding: 15px; }
+    h1 { font-size: 1.2rem; }
     
-    .file-item {
-        flex-wrap: wrap;
-        padding: 10px 15px;
-    }
+    .file-list-header { padding: 8px 12px; font-size: 0.72rem; gap: 4px; }
+    .file-item { padding: 8px 12px; gap: 4px; }
     
-    .file-thumb {
-        width: 80px;
-        height: 60px;
-    }
+    .col-check  { width: 30px; }
+    .col-order  { width: 38px; }
+    .col-thumb  { width: 56px; height: 38px; }
+    .col-type   { width: 50px; font-size: 0.7rem; }
+    .col-size   { width: 60px; }
+    .col-date   { width: 90px; }
+    .col-action { width: 85px; }
     
-    .file-name {
-        width: calc(100% - 130px);
-    }
-    
-    .file-type, .file-size, .file-date {
-        display: none;
-    }
-    
-    .file-action-btns {
-        width: 100%;
-        justify-content: flex-end;
-        margin-top: 5px;
-    }
+    .file-action-btns { width: 85px; gap: 2px; }
+    .btn-icon { padding: 4px 6px; font-size: 0.7rem; }
     
     .file-list-footer {
         flex-direction: column;
         align-items: flex-start;
     }
     
-    .pagination {
-        margin-left: 0;
-        width: 100%;
-        flex-wrap: wrap;
-    }
-}
-
-/* Filter buttons */
-.filter-btn {
-    background: #0f3460;
-    border: 1px solid #667eea;
-    color: #a0a0a0;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    margin: 0 2px;
-    transition: all 0.2s;
-}
-.filter-btn:hover {
-    background: #1a1a2e;
-    color: #667eea;
-}
-.filter-btn.active {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    border-color: transparent;
-}
-
-/* Sort buttons */
-.sort-btn {
-    background: none;
-    border: none;
-    color: #a0a0a0;
-    cursor: pointer;
-    font-size: 0.85rem;
-    padding: 2px 6px;
-    border-radius: 4px;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-}
-.sort-btn:hover {
-    color: #667eea;
-    background: #1a1a2e;
-}
-.sort-btn.active {
-    color: #667eea;
-}
-.sort-btn i {
-    font-size: 0.75rem;
-}
-
-    display: flex;
-    align-items: center;
-}
-
-/* Increase spacing between thumbnail and name */
-    margin-right: 15px;
-}
-
-/* Filter select dropdown */
-.filter-select {
-    background: #0f3460;
-    border: 1px solid #667eea;
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    outline: none;
-}
-.filter-select:hover {
-    border-color: #764ba2;
-}
-.filter-select option {
-    background: #16213e;
-    color: #fff;
-}
-
-/* Better spacing between thumb and name */
-    margin-right: 30px;
-}
-
-/* Sort icons in headers */
-.sort-btn i {
-    margin-left: 4px;
-    font-size: 0.7rem;
-    color: #667eea;
-}
-.sort-btn.active i {
-    color: #e94560;
-}
-
-/* Select all checkbox in header */
-    display: flex;
-    align-items: center;
-}
-.col-check input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    accent-color: #667eea;
-}
-
-/* Better header alignment */
-.file-list-header {
-    display: flex;
-    padding: 10px 25px;
-    align-items: center;
-    background: #0f3460;
-    border-bottom: 2px solid #667eea;
-    gap: 10px;
-}
-
-/* Sort icon on RIGHT side */
-.col-order .sort-btn,
-.col-size .sort-btn,
-.col-date .sort-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-.col-order .sort-btn i,
-.col-size .sort-btn i,
-.col-date .sort-btn i {
-    margin-left: 0;
-    margin-right: 0;
-}
-
-/* Increase order column width */
-    width: 80px;
-    flex-shrink: 0;
-}
-
-/* Header checkbox styling */
-.file-list-header .col-check input {
-    width: 18px;
-    height: 18px;
-}
-
-/* Left align all header columns except order */
-.file-list-header > span:not(.col-order) {
-    text-align: left;
-}
-
-/* Left align all data columns */
-.file-item > div:not(.file-order) {
-    text-align: left;
-}
-
-/* Center align order column */
-.file-order {
-    text-align: center;
-}
-
-/* Batch download button */
-.btn-batch-download {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border: none;
-    color: #fff;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s;
-}
-.btn-batch-download:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-/* Download icon button */
-.btn-download {
-    color: #4ade80;
-}
-.btn-download:hover {
-    color: #22c55e;
-    transform: scale(1.1);
-}
-
-/* Prevent overflow */
-.file-list {
-    overflow-x: visible;
-    max-width: 100%;
-}
-
-/* Better text alignment */
-.file-list-header > span {
-    padding: 5px;
-    box-sizing: border-box;
-}
-
-/* Action buttons container */
-.file-action-btns {
-    display: flex;
-    gap: 5px;
-    flex-shrink: 0;
-}
-
-/* Footer layout */
-.file-list-footer {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    padding: 10px;
-}
-
-/* Ensure columns don't overflow */
-.file-list-header, .file-item {
-    min-width: 100%;
-    max-width: 100%;
-}
-
-/* Truncate long file names */
-.file-name {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 200px;
-}
-
-/* Header right side layout */
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-left: auto;
-}
-
-/* Search input */
-
-.search-input::placeholder {
-    color: #a0a0a0;
-}
-.search-input:focus {
-    border-color: #764ba2;
-    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
-}
-
-/* Hide the empty col-check in header */
-.col-check:empty {
-    width: 50px;
-}
-
-/* Footer file count centered */
-
-/* Footer actions group */
-.footer-actions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.footer-file-count {
-    color: #ffffff;
-    font-size: 0.9rem;
-}
-
-/* File list footer layout */
-.file-list-footer {
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.footer-center {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-/* File count in header - smaller and muted */
-.file-count-header {
-    font-size: 0.85rem;
-    color: #c0c0c0;
-    font-weight: normal;
-}
-
-/* Search button */
-
-.search-btn:hover {
-    background: #1a1a2e;
-}
-
-.search-input {
-    border-radius: 6px 0 0 6px;
-    border-color: transparent;
-}
-
-/* Search input and button connected */
-.header-right {
-    display: flex;
-    align-items: center;
-}
-.search-btn {
-    border-radius: 0 6px 6px 0;
-    margin-left: 0;
-    border-color: transparent;
+    .footer-center { flex-wrap: wrap; }
 }

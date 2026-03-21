@@ -11,28 +11,53 @@
     <div class="container">
         <h1><img src="logo.png" alt="logo" class="site-logo"> 老蔡的作品展示</h1>
 
-        <section class="section">
-            <div class="section-header">
-                <h2><i class="fas fa-list"></i> 文件列表 <span id="fileCountHeader" class="file-count-header"></span></h2>
-                <div class="header-right">
-                    <input type="text" id="searchInput" class="search-input" placeholder="搜索文件名..."><button id="searchBtn" class="search-btn"><i class="fas fa-search"></i></button>
-                </div>
+        <!-- 独立的搜索区域 -->
+        <div class="search-section">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="搜索文件名...">
+                <button id="searchBtn" class="search-btn"><i class="fas fa-search"></i> 搜索</button>
             </div>
+        </div>
+
+        <!-- 文件列表区域 -->
+        <section class="section file-section">
             <div class="file-list-header">
                 <span class="col-check"><input type="checkbox" id="selectAll"></span>
-                <span class="col-order">序号<button class="sort-btn active" data-sort="order" title="按序号排序"><i class="fas fa-sort"></i></button></span>
+                <span class="col-order">序号</span>
                 <span class="col-thumb">缩略图</span>
                 <span class="col-name">文件名</span>
-                <span class="col-filter"><select class="filter-select" id="filterSelect"><option value="all">类型</option><option value="image">图片</option><option value="video">视频</option></select></span>
-                <span class="col-size"><button class="sort-btn" data-sort="size" title="按大小排序">大小<i class="fas fa-sort"></i></button></span>
-                <span class="col-date"><button class="sort-btn" data-sort="date" title="按时间排序">时间<i class="fas fa-sort"></i></button></span>
+                <span class="col-type">类型</span>
+                <span class="col-size">大小</span>
+                <span class="col-date">时间</span>
                 <span class="col-action">操作</span>
             </div>
             <div class="file-list" id="fileList">
                 <div class="empty-list">暂无文件，请上传</div>
             </div>
+            <div class="file-list-footer" id="fileListFooter">
+                <div class="footer-actions">
+                    <span class="select-all-label"><input type="checkbox" id="selectAllFooter"><span>全选</span></span>
+                    <button class="btn-batch-download"><i class="fas fa-download"></i> 批量下载</button>
+                    <button class="btn-batch-delete"><i class="fas fa-trash-alt"></i> 批量删除</button>
+                </div>
+                <div class="footer-center">
+                    <span class="footer-file-count" id="footerFileCount"></span>
+                    <div class="pagination">
+                        <span class="page-label">每页</span>
+                        <input type="number" id="pageSizeInput" value="10" min="1" max="10" class="page-size-input">
+                        <span class="page-label">个</span>
+                        <button class="btn-page btn-page-nav" id="prevPage"><i class="fas fa-chevron-left"></i></button>
+                        <span class="page-info" id="pageInfo">1 / 1</span>
+                        <button class="btn-page btn-page-nav" id="nextPage"><i class="fas fa-chevron-right"></i></button>
+                        <input type="number" id="pageInput" class="page-jump-input" placeholder="跳转">
+                        <button class="btn-page" id="jumpBtn">跳转</button>
+                    </div>
+                </div>
+            </div>
         </section>
 
+        <!-- 上传区域 -->
         <section class="section upload-section">
             <h2><i class="fas fa-cloud-upload-alt"></i> 上传文件</h2>
             <div class="upload-zone" id="uploadZone">
@@ -58,7 +83,7 @@
     </div>
 
     <footer class="version-footer">
-        <span id="versionNum" data-version="v1.0.0037"></span>
+        <span id="versionNum" data-version="v1.0.0038"></span>
     </footer>
 
     <script src="script.js"></script>
