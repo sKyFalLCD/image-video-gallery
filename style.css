@@ -109,7 +109,7 @@ h1 i {
 }
 
 .file-order {
-    width: 40px;
+    width: 55px;
     flex-shrink: 0;
     text-align: center;
     font-weight: 600;
@@ -118,7 +118,7 @@ h1 i {
 }
 
 .file-thumb {
-    width: 120px;
+    width: 80px;
     height: 75px;
     object-fit: cover;
     border-radius: 6px;
@@ -162,7 +162,7 @@ h1 i {
 }
 
 .file-type {
-    width: 60px;
+    width: 85px;
     flex-shrink: 0;
     text-align: center;
     font-size: 0.85rem;
@@ -177,7 +177,7 @@ h1 i {
 }
 
 .file-size {
-    width: 80px;
+    width: 90px;
     flex-shrink: 0;
     color: #a0a0a0;
     font-size: 0.85rem;
@@ -191,7 +191,7 @@ h1 i {
 }
 
 .file-checkbox {
-    width: 30px;
+    width: 40px;
     flex-shrink: 0;
 }
 
@@ -340,7 +340,7 @@ h1 i {
 }
 
 .file-action-btns {
-    width: 80px;
+    width: 100px;
     flex-shrink: 0;
     display: flex;
     gap: 5px;
@@ -796,7 +796,7 @@ h1 i {
 /* File count in header - smaller and muted */
 .file-count-header {
     font-size: 0.85rem;
-    color: #a0a0a0;
+    color: #c0c0c0;
     font-weight: normal;
 }
 
