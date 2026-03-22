@@ -100,7 +100,7 @@ class FileManager {
                 }
             });
             
-            this.fileList.addEventListener('change', (e) => {
+            document.addEventListener('change', (e) => {
                 if (e.target.id === 'pageSizeInput') {
                     this.changePageSize();
                     return;
