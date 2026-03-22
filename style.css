@@ -55,6 +55,16 @@ h1 {
     border-radius: 8px;
 }
 
+.file-count-badge {
+    font-size: 14px;
+    font-weight: normal;
+    color: var(--text-secondary, #888);
+    background: var(--bg-secondary, #f0f0f0);
+    padding: 4px 12px;
+    border-radius: 12px;
+    vertical-align: middle;
+}
+
 .section {
     background: var(--bg-card);
     border-radius: var(--radius);
