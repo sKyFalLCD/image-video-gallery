@@ -807,7 +807,7 @@ class FileManager {
             if (this.searchQuery && !f.name.toLowerCase().includes(this.searchQuery.toLowerCase())) return false;
             return true;
         });
-        var headerCount = document.getElementById('fileCount');
+        var headerCount = document.getElementById('fileCountHeader');
         if (headerCount) headerCount.textContent = '（共' + displayFiles.length + '个文件）';
     }
     
